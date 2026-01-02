@@ -1,0 +1,110 @@
+@import "tailwindcss";
+:root {
+  --background: #DDF4E7;
+  --foreground: #DDF4E7;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #DDF4E7;
+    --foreground: #DDF4E7;
+    --primary: #187068;
+    --primary-bold: #13463d;
+    --secondary: #67AE6E;
+    --tertiary: #90C67C;
+    --extra: #E1EEBC;
+    --error: #F44336;
+    --success: #28a745;
+    --form-background: #DDF4E7;
+  }
+}
+
+body {
+  background: var(--background) !important;
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+}
+.ant-input-affix-wrapper:hover{
+  border: 1px solid var(--primary) !important;
+}
+.ant-select-selector:hover {
+  border: 1px solid var(--primary) !important;
+}
+
+.primary-text{
+  color: var(--primary);
+}
+.primary-bold-text{
+  color: var(--primary-bold);
+}
+.primary-header-text{
+  color: var(--primary-bold);
+  font-weight: bold;
+  text-align: center;
+  text-transform: uppercase;
+  margin: 20px 0px;
+  font-size: 1.25rem;
+}
+.secondary-text{
+  color: var(--secondary);
+}
+.tertiary-text{
+  color: var(--tertiary);
+}
+.extra-text{
+  color: var(--extra);
+}
+.error-text{
+  color: var(--error);
+}
+.success-text{
+  color: var(--success);
+}
+
+/* Ghi đè màu nền và màu chữ của primary button */
+.ant-btn-primary {
+  background-color: var(--primary-bold) !important;
+  border-color: var(--primary-bold) !important;
+  color: white !important;
+  font-weight: 600 !important;
+}
+
+.ant-btn-primary:hover,
+.ant-btn-primary:focus {
+  background-color: var(--primary) !important;
+  border-color: var(--primary) !important;
+  font-weight: 600 !important;
+}
+
+.ant-btn-default{
+  font-weight: 600 !important;
+}
+
+.ant-btn-default:hover,
+.ant-btn-default:focus{
+  border-color: var(--primary) !important;
+  color: var(--primary) !important;
+  font-weight: 600 !important;
+}
+
+.ant-checkbox-input {
+  background-color: var(--primary-bold)8 !important;
+  border-color: var(--primary) !important;
+  color: white !important;
+}
+
+/* Khi checkbox được tick */
+.ant-checkbox-checked .ant-checkbox-inner {
+  background-color: var(--primary-bold) !important;
+  border-color: var(--primary) !important;
+}
+.ant-form-item{
+  margin-bottom: 8px !important;
+}
+
+

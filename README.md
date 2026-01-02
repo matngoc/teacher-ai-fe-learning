@@ -1,1 +1,1 @@
-# teacher-ai-fe-learning
+# teacher-ai-fe-lesson

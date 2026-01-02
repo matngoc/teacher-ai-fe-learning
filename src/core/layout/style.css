@@ -1,0 +1,23 @@
+.slider-app{
+    background: var(--primary-bold) !important;
+}
+.menu-app{
+    background: var(--primary-bold) !important;
+}
+.header-app{
+    background: white !important;
+    padding: 0 16px !important;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.content-app{
+    margin: 16px;
+}
+.ant-menu-item{
+    color: white !important;
+}
+.ant-menu-item.ant-menu-item-selected{
+    color: var(--primary-bold) !important;
+    background: var(--background) !important;
+}
