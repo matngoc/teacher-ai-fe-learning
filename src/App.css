@@ -9,6 +9,19 @@
   --color-foreground: var(--foreground);
 }
 
+:root {
+  --background: #DDF4E7;
+  --foreground: #DDF4E7;
+  --primary: #187068;
+  --primary-bold: #13463d;
+  --secondary: #67AE6E;
+  --tertiary: #90C67C;
+  --extra: #E1EEBC;
+  --error: #F44336;
+  --success: #28a745;
+  --form-background: #DDF4E7;
+}
+
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #DDF4E7;
@@ -93,7 +106,7 @@ body {
 }
 
 .ant-checkbox-input {
-  background-color: var(--primary-bold)8 !important;
+  background-color: var(--primary-bold) !important;
   border-color: var(--primary) !important;
   color: white !important;
 }

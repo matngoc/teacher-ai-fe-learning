@@ -2,6 +2,7 @@ import { configureStore, combineReducers } from "@reduxjs/toolkit";
 import { userReducer } from "./userSlice";
 import { roleReducer } from "./roleSlice";
 import sessionReducer from "./sessionSlice.ts";
+import learnerReducer from "./learnerSlice";
 
 import storage from "redux-persist/lib/storage"; // localStorage
 import {
@@ -18,7 +19,8 @@ const persistConfig = {
 const rootReducer = combineReducers({
     user: userReducer,
     role: roleReducer,
-    session: sessionReducer
+    session: sessionReducer,
+    learner: learnerReducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

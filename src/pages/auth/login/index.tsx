@@ -17,11 +17,11 @@ export default function LoginPage() {
     const { login } = useAuth();
     const dispatch = useDispatch();
 
-    useEffect(() => {
-        loginForm.setFieldsValue({
-            password: typeof window !== "undefined" ? navigator.userAgent : ""
-        })
-    }, [pass_w]);
+    // useEffect(() => {
+    //     loginForm.setFieldsValue({
+    //         password: typeof window !== "undefined" ? navigator.userAgent : ""
+    //     })
+    // }, [pass_w]);
 
     const handleLogin = async () => {
         try {
@@ -80,7 +80,9 @@ export default function LoginPage() {
                         name="password"
                         rules={[{ required: true, message: 'Vui lòng nhập mật khẩu!' }]}
                     >
-                        <Input.Password readOnly />
+                        <Input.Password
+                            // readOnly
+                        />
                     </Form.Item>
 
                     <Form.Item>

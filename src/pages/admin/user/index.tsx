@@ -1,6 +1,7 @@
 import { Modal, Form } from "antd";
 import { useSelector, useDispatch } from "react-redux";
-import type {AppDispatch, RootState} from "../../../stores";
+import type { RootState } from "../../../stores";
+import type { AppDispatch } from "../../../stores";
 import {useEffect, useState} from "react";
 import {userActions} from "../../../stores/userSlice.ts";
 import {BaseTableCrud} from "../../../core/components/table";
