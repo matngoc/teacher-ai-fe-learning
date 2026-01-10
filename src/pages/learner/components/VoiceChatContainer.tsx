@@ -17,7 +17,19 @@ import { AudioVisualizer } from './AudioVisualizer';
 import { LogPanel } from './LogPanel';
 import { toast } from 'react-toastify';
 
-export const VoiceChatContainer: React.FC = () => {
+interface VoiceChatContainerProps {
+  autoConnect?: boolean;
+  botId?: number;
+  showCaption?: boolean;
+  compactLayout?: boolean;
+}
+
+export const VoiceChatContainer: React.FC<VoiceChatContainerProps> = ({
+  autoConnect = false,
+  botId,
+  showCaption = true,
+  compactLayout = false,
+}) => {
   const dispatch = useDispatch<AppDispatch>();
   const { config, moods, connectionStatus } = useSelector((state: RootState) => state.learner);
   
@@ -70,15 +82,15 @@ export const VoiceChatContainer: React.FC = () => {
       console.log('✅ [MEDIA DISPLAYED AFTER AUDIO]', { itemsToDisplay, endTime });
       
       itemsToDisplay.forEach((item) => {
-        if (item.type === 'image' && item.imageUrl) {
-          // Update Redux state with the displayed image
+        if (item.type === 'image') {
+          // Update Redux state with the displayed image (or mood-only if imageUrl is empty)
           dispatch(learnerActions.setCurrentImage({
-            url: item.imageUrl,
+            url: item.imageUrl || '',
             mood: item.mood,
             servo: item.servo,
           }));
           dispatch(learnerActions.addLog({ 
-            message: `✅ Displayed queued image: ${item.mood || 'image'}`, 
+            message: `✅ Displayed queued ${item.imageUrl ? 'image' : 'mood'}: ${item.mood || 'content'}`, 
             type: 'info' 
           }));
         } else if (item.type === 'transcript' && item.transcript) {
@@ -336,30 +348,13 @@ export const VoiceChatContainer: React.FC = () => {
     
     console.log('🖼️ [HANDLE IMAGE MESSAGE - START]', { image_url, mood, servo, moodsCount: moods.length });
     
-    let imageUrl = image_url;
-    
-    // If mood is provided but no URL, fetch from mood list
-    if (!imageUrl && mood && moods.length > 0) {
-      const moodItem = moods.find((m: any) => m?.mood_name?.toLowerCase() === mood.toLowerCase());
-      console.log('🔍 [MOOD LOOKUP]', { mood, moodItem, found: !!moodItem });
-      imageUrl = moodItem?.url;
-    }
-    
-    // If still no URL but mood exists, try fetching from API
-    if (!imageUrl && mood) {
-      console.log('🌐 [FETCH MOOD FROM API]', { mood });
-      try {
-        imageUrl = await LearnerService.getImageUrlFromMood(mood, moods);
-        console.log('✅ [FETCHED MOOD URL]', { mood, imageUrl });
-      } catch (error) {
-        console.error('❌ [FETCH MOOD ERROR]', error);
-        dispatch(learnerActions.addLog({ message: `Failed to get image for mood: ${mood}`, type: 'error' }));
-      }
-    }
+    // Only use image_url if it's actually provided
+    // Don't fetch mood gif URL here - let AudioVisualizer handle it
+    const imageUrl = image_url;
 
-    if (imageUrl) {
-      if (config.mode === 'text') {
-        // Text mode: show immediately in chat as message
+    if (config.mode === 'text') {
+      // Text mode: show immediately in chat as message
+      if (imageUrl) {
         dispatch(learnerActions.addMessage({
           id: Date.now().toString(),
           type: 'image',
@@ -368,33 +363,37 @@ export const VoiceChatContainer: React.FC = () => {
           timestamp: Date.now(),
         }));
         dispatch(learnerActions.addLog({ message: `Added image to chat: ${mood || 'image'}`, type: 'info' }));
+      }
+    } else {
+      // Voice modes: queue for display after current audio finishes OR show immediately
+      const isAudioPlaying = audioPlayer.isPlaying();
+      const currentTime = audioPlayer.getCurrentTime();
+      const currentEndTime = lastAudioEndTimeRef.current;
+      
+      console.log('🎵 [AUDIO STATUS]', { 
+        isAudioPlaying, 
+        currentTime, 
+        currentEndTime,
+        willQueue: isAudioPlaying && currentEndTime > currentTime
+      });
+      
+      if (isAudioPlaying && currentEndTime > currentTime) {
+        // Audio is playing - queue to display after it finishes
+        // Use empty string for URL if only mood (AudioVisualizer will handle mood gif)
+        console.log('📥 [QUEUE IMAGE/MOOD]', { imageUrl: imageUrl || '', mood, servo, endTime: currentEndTime });
+        mediaQueue.queueImage(imageUrl || '', currentEndTime, mood, servo);
+        dispatch(learnerActions.addLog({ 
+          message: `📥 Queued ${imageUrl ? 'image' : 'mood'} to display after audio: ${mood || 'content'}`, 
+          type: 'info' 
+        }));
       } else {
-        // Voice modes: queue image for display after current audio finishes
-        const isAudioPlaying = audioPlayer.isPlaying();
-        const currentTime = audioPlayer.getCurrentTime();
-        const currentEndTime = lastAudioEndTimeRef.current;
-        
-        console.log('🎵 [AUDIO STATUS]', { 
-          isAudioPlaying, 
-          currentTime, 
-          currentEndTime,
-          willQueue: isAudioPlaying && currentEndTime > currentTime
-        });
-        
-        if (isAudioPlaying && currentEndTime > currentTime) {
-          // Audio is playing - queue image to display after it finishes
-          console.log('📥 [QUEUE IMAGE]', { imageUrl, mood, servo, endTime: currentEndTime });
-          mediaQueue.queueImage(imageUrl, currentEndTime, mood, servo);
-          dispatch(learnerActions.addLog({ 
-            message: `📥 Queued image to display after audio: ${mood || 'image'}`, 
-            type: 'info' 
-          }));
-        } else {
-          // No audio playing - show immediately
-          console.log('⚡ [SHOW IMAGE IMMEDIATELY]', { imageUrl, mood, servo });
-          dispatch(learnerActions.setCurrentImage({ url: imageUrl, mood, servo }));
-          dispatch(learnerActions.addLog({ message: `⚡ Displaying image immediately: ${mood || 'image'}`, type: 'info' }));
-        }
+        // No audio playing - show immediately
+        console.log('⚡ [SHOW IMMEDIATELY]', { imageUrl: imageUrl || '', mood, servo });
+        dispatch(learnerActions.setCurrentImage({ url: imageUrl || '', mood, servo }));
+        dispatch(learnerActions.addLog({ 
+          message: `⚡ Displaying ${imageUrl ? 'image' : 'mood'} immediately: ${mood || 'content'}`, 
+          type: 'info' 
+        }));
       }
     }
   }, [moods, config.mode, audioPlayer, mediaQueue, dispatch]);
@@ -460,21 +459,22 @@ export const VoiceChatContainer: React.FC = () => {
 
   // Connect handler
   const handleConnect = useCallback(async () => {
-    if (!config.userId || !config.todoId) {
-      toast.error('Please enter User ID and select a Todo');
-      return;
-    }
-
     try {
       dispatch(learnerActions.setConnectionStatus('connecting'));
       dispatch(learnerActions.addLog({ message: 'Initializing conversation...', type: 'info' }));
 
       // Initialize conversation
-      const initResponse = await LearnerService.initConversation({
-        user_id: config.userId,
-        todo_id: config.todoId,
-        conversation_id: conversationId || undefined,
-      });
+      const initResponse = botId 
+        ? await LearnerService.initConversationWithBot({
+            user_id: config.userId || 'default_user',
+            bot_id: botId,
+            conversation_id: conversationId || undefined,
+          })
+        : await LearnerService.initConversation({
+            user_id: config.userId,
+            todo_id: config.todoId,
+            conversation_id: conversationId || undefined,
+          });
 
       setConversationId(initResponse.conversation_id);
       dispatch(learnerActions.addLog({ 
@@ -494,8 +494,8 @@ export const VoiceChatContainer: React.FC = () => {
       // Send init message
       sendMessage({
         type: 'init',
-        user_id: config.userId,
-        todo_id: config.todoId,
+        user_id: config.userId || 'default_user',
+        ...(botId ? { bot_id: botId } : { todo_id: config.todoId }),
         conversation_id: initResponse.conversation_id,
       });
 
@@ -661,6 +661,42 @@ export const VoiceChatContainer: React.FC = () => {
     };
   }, [config.mode, audioRecorder.isRecording, handleMicPress, handleMicRelease, sendMessage, dispatch]);
 
+  // Auto-connect effect
+  useEffect(() => {
+    if (autoConnect) {
+      const timer = setTimeout(() => {
+        handleConnect();
+      }, 100);
+      
+      return () => {
+        clearTimeout(timer);
+        handleDisconnect();
+      };
+    }
+  }, []); // Empty deps - only run once on mount
+
+  if (compactLayout) {
+    // Compact layout for lesson learning page
+    return (
+      <div className="w-full max-w-2xl">
+        {/* Audio Visualizer */}
+        <AudioVisualizer showCaption={showCaption} />
+        
+        {/* Audio Controls */}
+        <div className="mt-4">
+          <AudioControls
+            onConnect={handleConnect}
+            onDisconnect={handleDisconnect}
+            onMicPress={handleMicPress}
+            onMicRelease={handleMicRelease}
+            disabled={connectionStatus === 'connecting'}
+            hideConnectionControls={true}
+          />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="max-w-3xl mx-auto">
       <ConfigPanel />
@@ -680,7 +716,7 @@ export const VoiceChatContainer: React.FC = () => {
         />
       ) : (
         <>
-          <AudioVisualizer />
+          <AudioVisualizer showCaption={showCaption} />
           <TranscriptPanel />
         </>
       )}

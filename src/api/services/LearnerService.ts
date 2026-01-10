@@ -18,6 +18,12 @@ export interface ConversationInitRequest {
   conversation_id?: string;
 }
 
+export interface ConversationInitWithBotRequest {
+  user_id: string;
+  bot_id: number;
+  conversation_id?: string;
+}
+
 export interface ConversationInitResponse {
   conversation_id: string;
   message?: string;
@@ -26,8 +32,18 @@ export interface ConversationInitResponse {
 export interface MoodResponse {
   data: Array<{
     id: string;
-    name: string;
+    mood_name: string;
     url: string;
+  }>;
+}
+
+export interface BotListResponse {
+  status: number;
+  msg: string;
+  result: Array<{
+    id: number;
+    name: string;
+    description: string;
   }>;
 }
 
@@ -57,6 +73,21 @@ export const LearnerService = {
     const payload = {
       ...data,
       conversation_id: data.conversation_id ?? 'string',
+    };
+    const response = await AxiosBaseHttpAiApi.post<ConversationInitResponse>(
+      '/bot/initConversation',
+      payload
+    );
+    return response.data;
+  },
+
+  /**
+   * Initialize conversation with bot_id instead of todo_id
+   */
+  async initConversationWithBot(params: ConversationInitWithBotRequest): Promise<ConversationInitResponse> {
+    const payload = {
+      ...params,
+      conversation_id: params.conversation_id ?? 'string',
     };
     const response = await AxiosBaseHttpAiApi.post<ConversationInitResponse>(
       '/bot/initConversation',
@@ -96,13 +127,29 @@ export const LearnerService = {
   async getImageUrlFromMood(moodName: string, moods?: MoodResponse['data']): Promise<string | null> {
     // If moods array is provided, search in it
     if (moods && moods.length > 0) {
-      const mood = moods.find(m => m.name.toLowerCase() === moodName.toLowerCase());
+      const mood = moods.find(m => m.mood_name.toLowerCase() === moodName.toLowerCase());
       return mood?.url || null;
     }
     
     // Otherwise fetch from API
     const response = await this.fetchMoodList();
-    const mood = response.data.find(m => m.name.toLowerCase() === moodName.toLowerCase());
+    const mood = response.data.find(m => m.mood_name.toLowerCase() === moodName.toLowerCase());
     return mood?.url || null;
+  },
+
+  /**
+   * Fetch list of available bots/lessons
+   */
+  async fetchBotList(): Promise<BotListResponse> {
+    const robotApiUrl = import.meta.env.VITE_AI_BE_URL || 'https://robot-api.hacknao.edu.vn/robot/api/v1';
+    const response = await axios.get<BotListResponse>(
+      `${robotApiUrl}/database/listBot`,
+      {
+        headers: {
+          'accept': 'application/json'
+        }
+      }
+    );
+    return response.data;
   },
 };

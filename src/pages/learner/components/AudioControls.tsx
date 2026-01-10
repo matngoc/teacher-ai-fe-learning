@@ -2,6 +2,7 @@ import React from 'react';
 import { Button, Space } from 'antd';
 import { useSelector } from 'react-redux';
 import type { RootState } from '~/stores';
+import SpaceKeyIcon from '~/assets/space-key-icon.svg';
 
 interface AudioControlsProps {
   onConnect: () => void;
@@ -9,6 +10,7 @@ interface AudioControlsProps {
   onMicPress: () => void;
   onMicRelease: () => void;
   disabled?: boolean;
+  hideConnectionControls?: boolean;
 }
 
 export const AudioControls: React.FC<AudioControlsProps> = ({
@@ -17,6 +19,7 @@ export const AudioControls: React.FC<AudioControlsProps> = ({
   onMicPress,
   onMicRelease,
   disabled = false,
+  hideConnectionControls = false,
 }) => {
   const { connectionStatus, isRecording, isHoldMode, config } = useSelector((state: RootState) => state.learner);
   const isConnected = connectionStatus === 'connected' || connectionStatus === 'listening';
@@ -57,71 +60,97 @@ export const AudioControls: React.FC<AudioControlsProps> = ({
   return (
     <div className="text-center">
       {/* Connection Buttons */}
-      <Space className="mb-5">
-        {!isConnected && !isConnecting && (
-          <Button
-            type="primary"
-            size="large"
-            onClick={onConnect}
-            disabled={disabled || !config.userId || !config.todoId}
-            className="px-8 py-2 h-auto rounded-full shadow-lg hover:shadow-xl transition-all"
-          >
-            🔌 Connect & Auto-Start
-          </Button>
-        )}
-        
-        {(isConnected || isConnecting) && (
-          <Button
-            danger
-            size="large"
-            onClick={onDisconnect}
-            disabled={disabled}
-            className="px-8 py-2 h-auto rounded-full shadow-lg hover:shadow-xl transition-all"
-          >
-            ❌ Disconnect
-          </Button>
-        )}
-      </Space>
+      {!hideConnectionControls && (
+        <Space className="mb-5">
+          {!isConnected && !isConnecting && (
+            <Button
+              type="primary"
+              size="large"
+              onClick={onConnect}
+              disabled={disabled}
+              className="px-8 py-2 h-auto rounded-full shadow-lg hover:shadow-xl transition-all"
+            >
+              🔌 Connect & Auto-Start
+            </Button>
+          )}
+          
+          {(isConnected || isConnecting) && (
+            <Button
+              danger
+              size="large"
+              onClick={onDisconnect}
+              disabled={disabled}
+              className="px-8 py-2 h-auto rounded-full shadow-lg hover:shadow-xl transition-all"
+            >
+              ❌ Disconnect
+            </Button>
+          )}
+        </Space>
+      )}
 
       {/* Status Display */}
-      <div className={`rounded-xl p-4 mb-5 font-semibold text-center ${status.className}`}>
-        {status.text}
-      </div>
+      {!hideConnectionControls && (
+        <div className={`rounded-xl p-4 mb-5 font-semibold text-center ${status.className}`}>
+          {status.text}
+        </div>
+      )}
 
-      {/* Microphone Button (only for voice modes) */}
+      {/* Audio Control Button (only for voice modes) */}
       {config.mode !== 'text' && (
-        <>
+        <div className="flex flex-col items-center">
+          {/* Circular Button */}
           <button
-            className={`rounded-full text-6xl border-none cursor-pointer transition-all shadow-lg hover:shadow-2xl
+            className={`border-4 cursor-pointer transition-all shadow-xl hover:shadow-2xl flex items-center justify-center
               ${isHoldMode
-                ? 'bg-gradient-to-br from-orange-500 to-red-600 scale-95 animate-pulse' 
+                ? 'bg-gradient-to-br from-orange-500 to-red-600 border-orange-700 scale-95 animate-pulse' 
                 : isRecording 
-                  ? 'bg-gradient-to-br from-yellow-400 to-pink-500 scale-95' 
-                  : 'bg-gradient-to-br from-purple-400 to-pink-600 hover:scale-105'
+                  ? 'bg-gradient-to-br from-yellow-400 to-pink-500 border-pink-700 scale-95' 
+                  : 'bg-gradient-to-br from-purple-400 to-pink-600 border-purple-700 hover:scale-105'
               }
               ${!isConnected || disabled ? 'opacity-50 cursor-not-allowed' : ''}
             `}
-            style={{ width: '120px', height: '120px' }}
+            style={{ 
+              width: '160px', 
+              height: '160px',
+              borderRadius: '50%',
+              borderColor: isHoldMode ? '#c2410c' : isRecording ? '#be185d' : '#6b21a8'
+            }}
             onMouseDown={!disabled && isConnected ? onMicPress : undefined}
             onMouseUp={!disabled && isConnected ? onMicRelease : undefined}
             onTouchStart={!disabled && isConnected ? onMicPress : undefined}
             onTouchEnd={!disabled && isConnected ? onMicRelease : undefined}
             disabled={!isConnected || disabled}
           >
-            🎤
+            {/* Icon based on state */}
+            <div className="text-white text-7xl">
+              {!isConnected ? '🔌' : (isHoldMode || isRecording) ? '👂' : '🗣️'}
+            </div>
           </button>
           
-          <div className="text-center text-gray-600 text-sm mt-4">
-            {!isConnected
-              ? 'Click connect to start'
-              : isHoldMode
-                ? 'Hana listening... Release to stop'
-                : isRecording
-                  ? 'Hana listening... Auto stop on pause'
-                  : 'Hana speaking... Press or hold space to interrupt'
-            }
+          {/* Status Text */}
+          <div className="text-center mt-6 max-w-xs">
+            <div className="text-gray-800 font-semibold text-lg mb-2">
+              {!isConnected
+                ? 'Not connected'
+                : isHoldMode
+                  ? 'Hana listening...'
+                  : isRecording
+                    ? 'Hana listening...'
+                    : 'Hana speaking...'
+              }
+            </div>
+            <div className="text-gray-600 text-sm flex items-center justify-center gap-1">
+              {!isConnected
+                ? 'Connect to start'
+                : isHoldMode
+                  ? <>Release <img src={SpaceKeyIcon} alt="space" className="inline w-4 h-4" /> to stop</>
+                  : isRecording
+                    ? 'Auto stop on pause'
+                    : <>Press or hold <img src={SpaceKeyIcon} alt="space" className="inline w-4 h-4" /> to interrupt</>
+              }
+            </div>
           </div>
-        </>
+        </div>
       )}
     </div>
   );

@@ -6,13 +6,16 @@ export const TranscriptPanel: React.FC = () => {
   const { transcript } = useSelector((state: RootState) => state.learner);
 
   return (
-    <div className="bg-gray-50 border-2 border-gray-200 rounded-xl p-4 mt-5">
-      <div className="font-semibold text-gray-700 mb-3 text-sm">
-        📝 Transcript:
-      </div>
-      <div className="text-gray-900 text-base leading-relaxed min-h-[60px]">
+    <div 
+      className="rounded-xl p-3 backdrop-blur-sm"
+      style={{ 
+        backgroundColor: 'rgba(0, 0, 0, 0.75)',
+        color: 'white'
+      }}
+    >
+      <div className="text-sm leading-relaxed min-h-[30px]">
         {transcript || (
-          <span className="text-gray-400 italic">No transcript yet...</span>
+          <span className="opacity-50 italic">No caption yet...</span>
         )}
       </div>
     </div>

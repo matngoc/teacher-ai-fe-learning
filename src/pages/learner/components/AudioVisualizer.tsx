@@ -2,53 +2,122 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import type { RootState } from '~/stores';
 
-export const AudioVisualizer: React.FC = () => {
-  const { currentImage, config } = useSelector((state: RootState) => state.learner);
+interface AudioVisualizerProps {
+  showCaption?: boolean;
+}
+
+export const AudioVisualizer: React.FC<AudioVisualizerProps> = ({ showCaption = true }) => {
+  const { currentImage, config, moods, transcript } = useSelector((state: RootState) => state.learner);
 
   // Only show for voice modes
   if (config.mode === 'text') {
     return null;
   }
 
+  // Helper function to get mood gif URL with default fallback to "happy"
+  const getMoodGifUrl = (mood?: string) => {
+    if (moods.length === 0) return null;
+    
+    // Try to find the requested mood
+    if (mood) {
+      const moodItem = moods.find((m: any) => m?.mood_name?.toLowerCase() === mood.toLowerCase());
+      if (moodItem?.url) return moodItem.url;
+    }
+    
+    // Fallback to "happy" as default
+    const happyMood = moods.find((m: any) => m?.mood_name?.toLowerCase() === 'happy');
+    return happyMood?.url || null;
+  };
+
+  const hasImage = currentImage?.url && currentImage.url.trim() !== '';
+  const moodGifUrl = getMoodGifUrl(currentImage?.mood);
+
   return (
     <div className="text-center my-5">
-      {currentImage ? (
-        <div className="inline-block rounded-2xl overflow-hidden shadow-2xl bg-gray-50 border-4 border-gray-200 max-w-md mx-auto">
+      {hasImage ? (
+        // Has image - main area full width with avatar at top-right corner
+        <div className="relative rounded-2xl overflow-hidden shadow-2xl bg-red-100 border-4 border-red-200 max-w-full mx-auto">
+          {/* Image Area (Red) - Full width */}
           <img
             src={currentImage.url}
-            alt="AI Response Visualization"
-            className="w-full h-auto block max-h-[300px] object-contain"
+            alt="Content"
+            className="w-full h-auto object-contain"
+            style={{ maxHeight: '400px', minHeight: '250px' }}
           />
-          {(currentImage.mood || currentImage.servo) && (
-            <div className="bg-gradient-to-r from-indigo-600 to-purple-700 text-white px-4 py-2 text-xs font-semibold">
-              {currentImage.mood && (
-                <span className="inline-block mr-3">
-                  😊 Mood: {currentImage.mood}
-                </span>
-              )}
-              {currentImage.servo && (
-                <span className="inline-block">
-                  🤖 Servo: {currentImage.servo}
-                </span>
+          
+          {/* Bottom container for caption and avatar */}
+          <div className="absolute bottom-3 left-3 right-3">
+            {/* Avatar fixed at bottom-right */}
+            <div className="absolute bottom-0 right-0 w-24 h-24 rounded-2xl overflow-hidden shadow-xl bg-green-100 border-4 border-green-300 flex items-center justify-center">
+              {moodGifUrl ? (
+                <img
+                  src={moodGifUrl}
+                  alt={`Mood: ${currentImage.mood || 'happy'}`}
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <div className="text-4xl">😊</div>
               )}
             </div>
-          )}
+            
+            {/* Caption centered with padding to avoid avatar */}
+            {showCaption && transcript && (
+              <div className="flex justify-center pr-28">
+                <div 
+                  className="rounded-lg px-3 py-2 backdrop-blur-sm inline-block"
+                  style={{ 
+                    backgroundColor: 'rgba(0, 0, 0, 0.75)',
+                    color: 'white'
+                  }}
+                >
+                  <div className="text-base leading-relaxed">
+                    {transcript}
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       ) : (
-        <div className="inline-block rounded-2xl overflow-hidden bg-gray-50 border-4 border-gray-200 max-w-md mx-auto">
-          <div 
-            className="px-10 py-20 text-gray-400 text-base"
-            style={{
-              background: `linear-gradient(45deg, #f8f9fa 25%, transparent 25%), 
-                           linear-gradient(-45deg, #f8f9fa 25%, transparent 25%), 
-                           linear-gradient(45deg, transparent 75%, #f8f9fa 75%), 
-                           linear-gradient(-45deg, transparent 75%, #f8f9fa 75%)`,
-              backgroundSize: '20px 20px',
-              backgroundPosition: '0 0, 0 10px, 10px -10px, -10px 0px',
-            }}
-          >
-            🖼️ No image to display
-          </div>
+        // No image - show only mood gif in main area (Red), full width
+        <div className="relative rounded-2xl overflow-hidden shadow-2xl bg-red-100 border-4 border-red-200 max-w-full mx-auto">
+          {moodGifUrl ? (
+            <img
+              src={moodGifUrl}
+              alt={`Mood: ${currentImage?.mood || 'happy'}`}
+              className="w-full h-auto object-contain"
+              style={{ maxHeight: '400px', minHeight: '250px' }}
+            />
+          ) : (
+            <div 
+              className="px-10 py-20 text-gray-400 text-base"
+              style={{
+                minHeight: '250px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              😊
+            </div>
+          )}
+          
+          {/* Caption Overlay at bottom - centered */}
+          {showCaption && transcript && (
+            <div className="absolute bottom-3 left-3 right-3 flex justify-center">
+              <div 
+                className="rounded-lg px-3 py-2 backdrop-blur-sm inline-block"
+                style={{ 
+                  backgroundColor: 'rgba(0, 0, 0, 0.75)',
+                  color: 'white'
+                }}
+              >
+                <div className="text-base leading-relaxed">
+                  {transcript}
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       )}
     </div>

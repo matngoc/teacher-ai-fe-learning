@@ -22,7 +22,7 @@ export interface TodoItem {
 
 export interface MoodItem {
   id: string;
-  name: string;
+  mood_name: string;
   url: string;
 }
 
@@ -91,7 +91,7 @@ const initialState: LearnerState = {
   isHoldMode: false,
   config: {
     wsUrl: getDefaultWebSocketUrl(),
-    userId: '',
+    userId: 'default_user',
     todoId: '',
     mode: 'direct',
     asrType: 'grpc',
