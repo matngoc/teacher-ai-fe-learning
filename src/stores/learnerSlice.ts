@@ -38,6 +38,7 @@ export interface LearnerState {
   // Connection
   connectionStatus: ConnectionStatus;
   isRecording: boolean;
+  isHoldMode: boolean;
   
   // Configuration
   config: LearnerConfig;
@@ -87,6 +88,7 @@ const getDefaultWebSocketUrl = (): string => {
 const initialState: LearnerState = {
   connectionStatus: 'disconnected',
   isRecording: false,
+  isHoldMode: false,
   config: {
     wsUrl: getDefaultWebSocketUrl(),
     userId: '',
@@ -113,6 +115,9 @@ const learnerSlice = createSlice({
     },
     setIsRecording: (state, action: PayloadAction<boolean>) => {
       state.isRecording = action.payload;
+    },
+    setIsHoldMode: (state, action: PayloadAction<boolean>) => {
+      state.isHoldMode = action.payload;
     },
     
     // Config actions

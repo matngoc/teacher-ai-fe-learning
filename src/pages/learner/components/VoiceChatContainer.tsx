@@ -8,7 +8,7 @@ import { useWebSocket } from '../hooks/useWebSocket';
 import { useAudioRecorder } from '../hooks/useAudioRecorder';
 import { useAudioPlayer } from '../hooks/useAudioPlayer';
 import { useSpeechRecognition } from '../hooks/useSpeechRecognition';
-import { useImageQueue } from '../hooks/useImageQueue';
+import { useMediaQueue } from '../hooks/useMediaQueue';
 import { ConfigPanel } from './ConfigPanel';
 import { AudioControls } from './AudioControls';
 import { ChatDisplay } from './ChatDisplay';
@@ -26,6 +26,8 @@ export const VoiceChatContainer: React.FC = () => {
   const lastAudioEndTimeRef = useRef(0);
   const autoReopenTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const lastMessageFinishedRef = useRef(true); // Track if last message was finished
+  const isHoldModeRef = useRef(false); // Track if in hold-to-talk mode
+  const mouseDownTimeRef = useRef(0); // Track mouse down time to distinguish click vs hold
 
   // Custom hooks
   const { isConnected, connect: wsConnect, disconnect: wsDisconnect, sendMessage, sendBinary, getIsConnected } = useWebSocket({
@@ -57,26 +59,39 @@ export const VoiceChatContainer: React.FC = () => {
     },
   });
 
-  const imageQueue = useImageQueue();
+  const mediaQueue = useMediaQueue();
 
-  // Callback when audio chunk finishes - check if there's pending image to display
+  // Callback when audio chunk finishes - check if there's pending media to display
   const handleAudioChunkEnd = useCallback((endTime: number) => {
-    // Try to display pending image after audio finishes
-    const displayedImage = imageQueue.displayPendingImage(endTime);
-    if (displayedImage) {
-      console.log('✅ [IMAGE DISPLAYED AFTER AUDIO]', { displayedImage, endTime });
-      // Update Redux state with the displayed image
-      dispatch(learnerActions.setCurrentImage({
-        url: displayedImage.url,
-        mood: displayedImage.mood,
-        servo: displayedImage.servo,
-      }));
-      dispatch(learnerActions.addLog({ 
-        message: `✅ Displayed queued image: ${displayedImage.mood || 'image'}`, 
-        type: 'info' 
-      }));
+    // Display all pending media items for this audio chunk
+    const itemsToDisplay = mediaQueue.displayPendingMedia(endTime);
+    
+    if (itemsToDisplay.length > 0) {
+      console.log('✅ [MEDIA DISPLAYED AFTER AUDIO]', { itemsToDisplay, endTime });
+      
+      itemsToDisplay.forEach((item) => {
+        if (item.type === 'image' && item.imageUrl) {
+          // Update Redux state with the displayed image
+          dispatch(learnerActions.setCurrentImage({
+            url: item.imageUrl,
+            mood: item.mood,
+            servo: item.servo,
+          }));
+          dispatch(learnerActions.addLog({ 
+            message: `✅ Displayed queued image: ${item.mood || 'image'}`, 
+            type: 'info' 
+          }));
+        } else if (item.type === 'transcript' && item.transcript) {
+          // Update transcript
+          dispatch(learnerActions.setTranscript(item.transcript));
+          dispatch(learnerActions.addLog({ 
+            message: '✅ Displayed queued transcript', 
+            type: 'info' 
+          }));
+        }
+      });
     }
-  }, [imageQueue, dispatch]);
+  }, [mediaQueue, dispatch]);
 
   const audioPlayer = useAudioPlayer(handleAudioChunkEnd);
 
@@ -251,18 +266,37 @@ export const VoiceChatContainer: React.FC = () => {
           
           // Handle both 'input' and 'output' types
           if ((data.type === 'input' || data.type === 'output') && data.content) {
-            // If last message was finished, clear transcript before appending
-            if (lastMessageFinishedRef.current) {
+            if (data.type === 'input') {
+              // Input: always display immediately (real-time speech recognition)
               dispatch(learnerActions.setTranscript(data.content));
-              console.log('🔄 [TRANSCRIPT CLEARED & SET]', data.content);
+              console.log('🔄 [TRANSCRIPT REPLACED - INPUT]', data.content);
+              
+              // When input finishes, mark it so next output will clear
+              if (data.is_finished) {
+                lastMessageFinishedRef.current = true;
+              }
             } else {
-              // Append to existing transcript
-              dispatch(learnerActions.appendTranscript(data.content));
-              console.log('➕ [TRANSCRIPT APPENDED]', data.content);
+              // Output: queue transcript to display after audio finishes
+              const isAudioPlaying = audioPlayer.isPlaying();
+              const currentTime = audioPlayer.getCurrentTime();
+              const currentEndTime = lastAudioEndTimeRef.current;
+              
+              if (isAudioPlaying && currentEndTime > currentTime) {
+                // Audio is playing - queue transcript to display after it finishes
+                console.log('📥 [QUEUE TRANSCRIPT]', { content: data.content, endTime: currentEndTime });
+                mediaQueue.queueTranscript(data.content, currentEndTime);
+                dispatch(learnerActions.addLog({ 
+                  message: '📥 Queued transcript to display after audio', 
+                  type: 'info' 
+                }));
+              } else {
+                // No audio playing - show immediately
+                console.log('⚡ [SHOW TRANSCRIPT IMMEDIATELY]', data.content);
+                dispatch(learnerActions.setTranscript(data.content));
+              }
+              
+              lastMessageFinishedRef.current = false; // Reset for continuous updates
             }
-            
-            // Update finished flag for next message
-            lastMessageFinishedRef.current = data.is_finished || false;
             
             // For text mode, also add to chat display
             if (config.mode === 'text' && data.type === 'output') {
@@ -350,7 +384,7 @@ export const VoiceChatContainer: React.FC = () => {
         if (isAudioPlaying && currentEndTime > currentTime) {
           // Audio is playing - queue image to display after it finishes
           console.log('📥 [QUEUE IMAGE]', { imageUrl, mood, servo, endTime: currentEndTime });
-          imageQueue.queueImage(imageUrl, mood, servo, currentEndTime);
+          mediaQueue.queueImage(imageUrl, currentEndTime, mood, servo);
           dispatch(learnerActions.addLog({ 
             message: `📥 Queued image to display after audio: ${mood || 'image'}`, 
             type: 'info' 
@@ -363,7 +397,7 @@ export const VoiceChatContainer: React.FC = () => {
         }
       }
     }
-  }, [moods, config.mode, audioPlayer, imageQueue, dispatch]);
+  }, [moods, config.mode, audioPlayer, mediaQueue, dispatch]);
 
   // Handle turn complete
   const handleTurnComplete = useCallback((_message: any) => {
@@ -492,14 +526,17 @@ export const VoiceChatContainer: React.FC = () => {
   // Mic press handler
   const handleMicPress = useCallback(() => {
     if (!isConnected) return;
+    
+    mouseDownTimeRef.current = Date.now();
 
     if (config.mode === 'direct') {
-      // Direct audio: click to start (if not recording), server controls stop
+      // Direct audio: click to start (if not recording)
+      // Hold button/space while recording to enter hold mode
       if (!audioRecorder.isRecording) {
         audioRecorder.startRecording();
         audioPlayer.toggleMute(true); // Mute incoming audio while user speaks
         dispatch(learnerActions.setIsRecording(true));
-        dispatch(learnerActions.addLog({ message: 'Recording started - waiting for server signal to stop', type: 'info' }));
+        dispatch(learnerActions.addLog({ message: 'Recording started - hold space/button for hold mode', type: 'info' }));
         
         // Send start_user_audio signal to server
         sendMessage({ type: 'start_user_audio' });
@@ -510,8 +547,15 @@ export const VoiceChatContainer: React.FC = () => {
           autoReopenTimerRef.current = null;
         }
         turnCompleteRef.current = false;
+        isHoldModeRef.current = false; // Reset hold mode
+      } else if (!isHoldModeRef.current) {
+        // Already recording, enter hold mode
+        isHoldModeRef.current = true;
+        dispatch(learnerActions.setIsHoldMode(true));
+        sendMessage({ type: 'control', data: { command: 'start_hold' } });
+        dispatch(learnerActions.addLog({ message: '🔒 Hold mode activated (button)', type: 'info' }));
       }
-      // Don't stop on press - wait for server end_user_audio signal
+      // Don't stop on press - wait for server end_user_audio signal or hold mode release
     } else if (config.mode === 'stt') {
       // STT: toggle speech recognition
       if (speechRecognition.isListening) {
@@ -525,15 +569,26 @@ export const VoiceChatContainer: React.FC = () => {
     }
   }, [isConnected, config.mode, audioRecorder, audioPlayer, speechRecognition, sendMessage, dispatch]);
 
-  // Mic release handler (only for STT mode, direct mode ignores this)
+  // Mic release handler for button (handles hold mode)
   const handleMicRelease = useCallback(() => {
-    // Direct mode ignores release - waits for server signal (end_user_audio)
-    if (config.mode === 'stt' && audioRecorder.isRecording) {
+    const pressDuration = Date.now() - mouseDownTimeRef.current;
+    
+    // Only process release if it was a hold (> 200ms) or in hold mode
+    // This prevents quick clicks from triggering hold mode exit
+    if (config.mode === 'direct' && isHoldModeRef.current && pressDuration > 100) {
+      // Exit hold mode when button released
+      isHoldModeRef.current = false;
+      dispatch(learnerActions.setIsHoldMode(false));
+      sendMessage({ type: 'control', data: { command: 'end_hold' } });
+      dispatch(learnerActions.addLog({ message: '🔓 Hold mode released (button) - waiting for server', type: 'info' }));
+      // Server will send end_user_audio to stop recording
+    } else if (config.mode === 'stt' && audioRecorder.isRecording) {
+      // STT mode: release stops recording immediately
       audioRecorder.stopRecording();
       dispatch(learnerActions.setIsRecording(false));
       dispatch(learnerActions.addLog({ message: 'Recording stopped', type: 'info' }));
     }
-  }, [config.mode, audioRecorder, dispatch]);
+  }, [config.mode, audioRecorder, sendMessage, dispatch]);
 
   // Text message handler
   const handleSendTextMessage = useCallback((text: string) => {
@@ -556,23 +611,44 @@ export const VoiceChatContainer: React.FC = () => {
     dispatch(learnerActions.addLog({ message: `Sent: ${text}`, type: 'info' }));
   }, [isConnected, sendMessage, dispatch]);
 
-  // Keyboard handler for Space key
+  // Keyboard handler for Space key with hold-to-talk support
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.code === 'Space' && !e.repeat && config.mode !== 'text') {
+      if (e.code === 'Space' && config.mode !== 'text') {
         const activeElement = document.activeElement;
         if (activeElement?.tagName === 'INPUT' || activeElement?.tagName === 'TEXTAREA') {
           return; // Don't interfere with input fields
         }
         e.preventDefault();
-        handleMicPress();
+        
+        // If already recording in direct mode and not in hold mode yet, enter hold mode
+        if (config.mode === 'direct' && audioRecorder.isRecording && !isHoldModeRef.current && !e.repeat) {
+          isHoldModeRef.current = true;
+          dispatch(learnerActions.setIsHoldMode(true));
+          sendMessage({ type: 'control', data: { command: 'start_hold' } });
+          dispatch(learnerActions.addLog({ message: '🔒 Hold mode activated - hold space to keep talking', type: 'info' }));
+        } else if (!e.repeat) {
+          // Normal mic press for first time or STT mode
+          handleMicPress();
+        }
       }
     };
 
     const handleKeyUp = (e: KeyboardEvent) => {
-      if (e.code === 'Space' && config.mode === 'direct') {
+      if (e.code === 'Space') {
         e.preventDefault();
-        handleMicRelease();
+        
+        if (config.mode === 'direct' && isHoldModeRef.current) {
+          // Exit hold mode - send end_hold signal
+          isHoldModeRef.current = false;
+          dispatch(learnerActions.setIsHoldMode(false));
+          sendMessage({ type: 'control', data: { command: 'end_hold' } });
+          dispatch(learnerActions.addLog({ message: '🔓 Hold mode released - waiting for server to stop recording', type: 'info' }));
+          // Server will send end_user_audio to stop recording
+        } else if (config.mode === 'stt') {
+          // STT mode: release stops recording
+          handleMicRelease();
+        }
       }
     };
 
@@ -583,7 +659,7 @@ export const VoiceChatContainer: React.FC = () => {
       window.removeEventListener('keydown', handleKeyDown);
       window.removeEventListener('keyup', handleKeyUp);
     };
-  }, [config.mode, handleMicPress, handleMicRelease]);
+  }, [config.mode, audioRecorder.isRecording, handleMicPress, handleMicRelease, sendMessage, dispatch]);
 
   return (
     <div className="max-w-3xl mx-auto">

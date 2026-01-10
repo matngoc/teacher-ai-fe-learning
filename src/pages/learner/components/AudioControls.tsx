@@ -18,7 +18,7 @@ export const AudioControls: React.FC<AudioControlsProps> = ({
   onMicRelease,
   disabled = false,
 }) => {
-  const { connectionStatus, isRecording, config } = useSelector((state: RootState) => state.learner);
+  const { connectionStatus, isRecording, isHoldMode, config } = useSelector((state: RootState) => state.learner);
   const isConnected = connectionStatus === 'connected' || connectionStatus === 'listening';
   const isConnecting = connectionStatus === 'connecting';
 
@@ -93,9 +93,11 @@ export const AudioControls: React.FC<AudioControlsProps> = ({
         <>
           <button
             className={`rounded-full text-6xl border-none cursor-pointer transition-all shadow-lg hover:shadow-2xl
-              ${isRecording 
-                ? 'bg-gradient-to-br from-yellow-400 to-pink-500 scale-95' 
-                : 'bg-gradient-to-br from-purple-400 to-pink-600 hover:scale-105'
+              ${isHoldMode
+                ? 'bg-gradient-to-br from-orange-500 to-red-600 scale-95 animate-pulse' 
+                : isRecording 
+                  ? 'bg-gradient-to-br from-yellow-400 to-pink-500 scale-95' 
+                  : 'bg-gradient-to-br from-purple-400 to-pink-600 hover:scale-105'
               }
               ${!isConnected || disabled ? 'opacity-50 cursor-not-allowed' : ''}
             `}
@@ -110,9 +112,13 @@ export const AudioControls: React.FC<AudioControlsProps> = ({
           </button>
           
           <div className="text-center text-gray-600 text-sm mt-4">
-            {config.mode === 'direct' 
-              ? 'Hold to speak (or press Space key)'
-              : 'Click to toggle recording (or press Space key)'
+            {!isConnected
+              ? 'Click connect to start'
+              : isHoldMode
+                ? 'Hana listening... Release to stop'
+                : isRecording
+                  ? 'Hana listening... Auto stop on pause'
+                  : 'Hana speaking... Press or hold space to interrupt'
             }
           </div>
         </>
