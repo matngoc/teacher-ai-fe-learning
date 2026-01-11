@@ -35,7 +35,7 @@ export function CheckpointItem({ checkpoint, onChange }: CheckpointItemProps) {
   const responseMedia = checkpoint.media_list.filter((m) => m.type === "for_response");
 
   return (
-    <div className="p-6 space-y-6 border-t">
+    <div className="p-6 space-y-6">
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-2">
           <label className="block text-sm font-medium mb-1">Name</label>

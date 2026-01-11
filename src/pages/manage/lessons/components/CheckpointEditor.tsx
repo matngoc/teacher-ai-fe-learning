@@ -161,7 +161,7 @@ export function CheckpointEditor({ initialCheckpoints = [], onSave }: Checkpoint
             items={checkpoints.map((cp) => cp.uniqueId)}
             strategy={verticalListSortingStrategy}
           >
-            <div className="space-y-3">
+            <div className="space-y-4">
               {checkpoints.map((checkpoint, index) => (
                 <SortableCheckpointCard
                   key={checkpoint.uniqueId}
@@ -226,6 +226,7 @@ function SortableCheckpointCard({
     transform: CSS.Transform.toString(transform),
     transition,
     opacity: isDragging ? 0.5 : 1,
+    marginBottom: '12px',
     borderLeftColor:
       checkpoint.type === "narrative" ? "hsl(var(--narrative))" : "hsl(var(--cta))",
   };
@@ -239,7 +240,7 @@ function SortableCheckpointCard({
       styles={{ body: { padding: 0, borderLeft: `8px solid ${checkpoint.type === 'narrative' ? 'rgb(234, 179, 8)' : 'rgb(59, 130, 246)'}` } }}
     >
       <div 
-        className="flex items-center justify-between p-4 cursor-pointer hover:bg-gray-50"
+        className="flex items-center justify-between p-4 cursor-pointer hover:bg-gray-50 border-b border-gray-200"
         onClick={onToggle}
       >
         <div className="flex items-center gap-3 flex-1">
@@ -255,6 +256,9 @@ function SortableCheckpointCard({
           <span className="font-medium">{checkpoint.name}</span>
         </div>
         <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
+          <span className={`px-3 py-1 rounded text-xs font-medium ${checkpoint.type === 'narrative' ? 'bg-yellow-100 text-yellow-800' : 'bg-blue-100 text-blue-800'}`}>
+            {checkpoint.type === 'narrative' ? 'Narrative' : 'CTA'}
+          </span>
           <Button
             type="text"
             danger
@@ -271,7 +275,11 @@ function SortableCheckpointCard({
         </div>
       </div>
 
-      {isExpanded && <CheckpointItem checkpoint={checkpoint} onChange={onUpdate} />}
+      {isExpanded && (
+        <div className="">
+          <CheckpointItem checkpoint={checkpoint} onChange={onUpdate} />
+        </div>
+      )}
     </Card>
   );
 }
