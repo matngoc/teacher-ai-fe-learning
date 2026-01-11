@@ -7,11 +7,27 @@ interface AudioVisualizerProps {
 }
 
 export const AudioVisualizer: React.FC<AudioVisualizerProps> = ({ showCaption = true }) => {
-  const { currentImage, config, moods, transcript } = useSelector((state: RootState) => state.learner);
+  const { currentImage, config, moods, transcript, connectionStatus } = useSelector((state: RootState) => state.learner);
 
   // Only show for voice modes
   if (config.mode === 'text') {
     return null;
+  }
+
+  // Show loading when connecting
+  if (connectionStatus === 'connecting') {
+    return (
+      <div className="text-center my-5">
+        <div className="relative rounded-2xl overflow-hidden shadow-2xl bg-gradient-to-br from-purple-100 to-pink-100 border-4 border-purple-300 max-w-full mx-auto flex items-center justify-center"
+          style={{ minHeight: '250px' }}
+        >
+          <div className="flex flex-col items-center gap-4">
+            <div className="w-16 h-16 border-4 border-purple-500 border-t-transparent rounded-full animate-spin"></div>
+            <div className="text-purple-700 font-semibold text-lg">Connecting...</div>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   // Helper function to get mood gif URL with default fallback to "happy"
