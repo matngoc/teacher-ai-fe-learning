@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Plus } from "lucide-react";
-import { Button, Modal } from "antd";
+import { Modal } from "antd";
 import type { Media, MediaType } from "../types/checkpoint";
 import { MediaCard } from "./MediaCard";
 import { MediaFormDialog } from "./MediaFormDialog";
@@ -49,7 +49,7 @@ export function MediaSection({
 
   const handleSave = (media: Media) => {
     // Check for duplicate ID in the entire checkpoint
-    const isDuplicate = allMediaInCheckpoint.some((m, idx) => {
+    const isDuplicate = allMediaInCheckpoint.some((m) => {
       // If editing, exclude the current media being edited
       if (editingIndex !== null) {
         const currentMedia = mediaList[editingIndex];

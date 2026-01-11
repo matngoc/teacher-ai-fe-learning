@@ -86,7 +86,7 @@ export function BaseTableCrud<T extends { id: string }>(
                             label: "Xóa",
                             key: '2',
                             icon: <DeleteOutlined />,
-                            onClick: () => showPopconfirm(record._id),
+                            onClick: () => showPopconfirm(record.id),
                             danger: true
                         },
                     ]
@@ -102,7 +102,7 @@ export function BaseTableCrud<T extends { id: string }>(
                         </Dropdown>
                         <Popconfirm
                             title="Xóa bản ghi này?"
-                            open={deleteId === record._id}
+                            open={deleteId === record.id}
                             onCancel={closePopconfirm}
                             onConfirm={() => onDelete(record.id)}
                             cancelText={"Đóng"}

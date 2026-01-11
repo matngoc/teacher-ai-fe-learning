@@ -1,6 +1,4 @@
-import {useEffect } from "react";
 import {Button, Form, type FormProps, Input } from "antd";
-import {useWatch} from "antd/es/form/Form";
 import {FormOutlined, LoginOutlined} from "@ant-design/icons";
 import {AuthService} from "../../../api/services/AuthService";
 import "../style.css";
@@ -12,7 +10,7 @@ import {setUser} from "../../../stores/sessionSlice.ts";
 
 export default function LoginPage() {
     const [loginForm] = Form.useForm();
-    const pass_w = useWatch('password', loginForm);
+    // const pass_w = useWatch('password', loginForm);
     const navigate = useNavigate();
     const { login } = useAuth();
     const dispatch = useDispatch();

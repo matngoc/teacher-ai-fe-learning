@@ -1,12 +1,5 @@
 import {
-  IList,
-  List,
-  IListResult,
-  ListResultDto,
-  IPagedResult,
-  PagedResultDto,
-  Dictionary,
-  IDictionary,
+
   IRequestOptions,
   IRequestConfig,
   getConfigs,

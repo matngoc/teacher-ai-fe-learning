@@ -1,9 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button, Table, Input, Space, Tag } from 'antd';
 import { PlusOutlined, EditOutlined, SearchOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import { LessonService } from '~/api/services/LessonService';
-import type { BotListResponse } from '~/api/services/LessonService';
 import { toast } from 'react-toastify';
 import type { ColumnsType } from 'antd/es/table';
 

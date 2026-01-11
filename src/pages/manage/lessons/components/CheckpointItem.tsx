@@ -1,11 +1,10 @@
 import { useState } from "react";
 import type { Checkpoint } from "../types/checkpoint";
-import { Input, Form } from "antd";
+import { Input } from "antd";
 import { MediaSection } from "./MediaSection";
 import { TagInsertButtons } from "./TagInsertButtons";
 
 const { TextArea } = Input;
-const { Item: FormItem } = Form;
 
 interface CheckpointItemProps {
   checkpoint: Checkpoint;

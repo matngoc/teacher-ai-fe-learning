@@ -1,12 +1,9 @@
 import {
     UserOutlined,
-    HomeOutlined,
     MenuFoldOutlined,
     MenuUnfoldOutlined,
     LogoutOutlined,
     SettingOutlined,
-    GroupOutlined,
-    ClusterOutlined,
     StockOutlined
 } from "@ant-design/icons";
 import {Button, Menu, Layout, Dropdown} from 'antd';
@@ -37,10 +34,8 @@ export default function MainLayout() {
         { key: "/page/role", label: <Link to="/page/role">Vai trò</Link>, icon: <SettingOutlined /> },
     ]
     const menuItems = [
-        { key: "/page/dashboard", label: <Link to="/page/dashboard">Dashboard</Link>, icon: <HomeOutlined /> },
-        { key: "/page/vote", label: <Link to="/page/vote">Vote</Link>, icon: <ClusterOutlined /> },
-        { key: "/page/campaign", label: <Link to="/page/campaign">Chiến dịch</Link>, icon: <GroupOutlined /> },
-        { key: "/page/transaction", label: <Link to="/page/transaction">Thống kê</Link>, icon: <StockOutlined /> },
+        { key: "/learn/choose", label: <Link to="/learn/choose">Người học</Link>, icon: <UserOutlined /> },
+        { key: "/manage/lessons", label: <Link to="/manage/lessons">Bài học</Link>, icon: <StockOutlined /> },
     ];
     const userMenu = {
         items: [
