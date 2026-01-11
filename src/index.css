@@ -8,6 +8,10 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  
+  /* Checkpoint colors */
+  --cta: 59 130 246; /* blue-500 */
+  --narrative: 234 179 8; /* yellow-500 */
 }
 
 a {

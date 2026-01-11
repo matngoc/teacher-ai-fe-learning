@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Card, Button, Spin, Empty, Input } from 'antd';
 import { useNavigate } from 'react-router-dom';
-import { LearnerService } from '~/api/services/LearnerService';
-import type { BotListResponse } from '~/api/services/LearnerService';
+import { LessonService } from '~/api/services/LessonService';
+import type { BotListResponse } from '~/api/services/LessonService';
 import { toast } from 'react-toastify';
 
 const { Search } = Input;
@@ -33,7 +33,7 @@ export const LessonChooser: React.FC = () => {
   const fetchLessons = async () => {
     try {
       setLoading(true);
-      const response = await LearnerService.fetchBotList();
+      const response = await LessonService.fetchBotList();
       
       if (response.status === 0 && response.result) {
         setLessons(response.result);

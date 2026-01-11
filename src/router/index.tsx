@@ -1,12 +1,13 @@
 import { createBrowserRouter } from "react-router-dom";
 import NotFoundPage from "../components/NotFoundPage";
-import {MainRouter} from "./MainRouter";
+import {MainRouter, ManageRouter} from "./MainRouter";
 import {AuthRouter} from "./AuthRouter";
 import { LessonChooser } from "../pages/learner/LessonChooser";
 import LearnerPage from "../pages/learner";
 
 const router = createBrowserRouter([
     MainRouter,
+    ManageRouter,
     AuthRouter,
     // Public route for lesson selection
     {

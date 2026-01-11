@@ -5,6 +5,7 @@ import { ArrowLeftOutlined } from '@ant-design/icons';
 import { useDispatch, useSelector } from 'react-redux';
 import { VoiceChatContainer } from './components/VoiceChatContainer';
 import { LearnerService } from '~/api/services/LearnerService';
+import { LessonService } from '~/api/services/LessonService';
 import { learnerActions } from '~/stores/learnerSlice';
 import type { AppDispatch } from '~/stores';
 
@@ -19,7 +20,7 @@ const LearnerPage: React.FC = () => {
   useEffect(() => {
     if (id) {
       // Fetch lesson info
-      LearnerService.fetchBotList().then(response => {
+      LessonService.fetchBotList().then(response => {
         const lesson = response.result.find(bot => bot.id === parseInt(id));
         if (lesson) {
           setLessonName(lesson.name);

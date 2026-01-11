@@ -37,16 +37,6 @@ export interface MoodResponse {
   }>;
 }
 
-export interface BotListResponse {
-  status: number;
-  msg: string;
-  result: Array<{
-    id: number;
-    name: string;
-    description: string;
-  }>;
-}
-
 export const LearnerService = {
   /**
    * Fetch list of available todos from Robot API
@@ -137,19 +127,4 @@ export const LearnerService = {
     return mood?.url || null;
   },
 
-  /**
-   * Fetch list of available bots/lessons
-   */
-  async fetchBotList(): Promise<BotListResponse> {
-    const robotApiUrl = import.meta.env.VITE_AI_BE_URL || 'https://robot-api.hacknao.edu.vn/robot/api/v1';
-    const response = await axios.get<BotListResponse>(
-      `${robotApiUrl}/database/listBot`,
-      {
-        headers: {
-          'accept': 'application/json'
-        }
-      }
-    );
-    return response.data;
-  },
 };
