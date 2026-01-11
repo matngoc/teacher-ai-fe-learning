@@ -177,7 +177,7 @@ export function CheckpointEditor({ initialCheckpoints = [], onSave }: Checkpoint
           </SortableContext>
 
           {checkpoints.length === 0 && (
-            <Card className="p-12 text-center">
+            <Card className="p-12 text-center" variant="borderless">
               <p className="text-gray-500 mb-4">No checkpoints yet</p>
               <Button onClick={addCheckpoint} icon={<Plus className="h-4 w-4" />}>
                 Add Your First Checkpoint
@@ -235,6 +235,7 @@ function SortableCheckpointCard({
       ref={setNodeRef}
       style={style}
       className="overflow-hidden transition-all"
+      variant="borderless"
       styles={{ body: { padding: 0, borderLeft: `8px solid ${checkpoint.type === 'narrative' ? 'rgb(234, 179, 8)' : 'rgb(59, 130, 246)'}` } }}
     >
       <div 
@@ -242,14 +243,14 @@ function SortableCheckpointCard({
         onClick={onToggle}
       >
         <div className="flex items-center gap-3 flex-1">
-          <button
-            className="cursor-grab active:cursor-grabbing touch-none"
+          <div
+            className="cursor-grab active:cursor-grabbing touch-none flex items-center"
             onClick={(e) => e.stopPropagation()}
             {...attributes}
             {...listeners}
           >
             <GripVertical className="h-5 w-5 text-gray-400" />
-          </button>
+          </div>
           <span className="text-lg font-semibold">{index + 1}</span>
           <span className="font-medium">{checkpoint.name}</span>
         </div>

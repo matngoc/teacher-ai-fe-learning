@@ -62,7 +62,7 @@ export const LessonService = {
     const response = await axios.get<BotDetailResponse>(
       `${robotApiUrl}/database/getDataBot`,
       {
-        params: { id },
+        params: { bot_id: id },
         headers: {
           'accept': 'application/json'
         }
