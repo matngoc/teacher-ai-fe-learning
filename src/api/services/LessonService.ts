@@ -130,7 +130,7 @@ export const LessonService = {
     const robotApiUrl = import.meta.env.VITE_AI_BE_URL || 'https://robot-api.hacknao.edu.vn/robot/api/v1';
     
     const body = {
-      id: data.id,
+      bot_id: data.id,
       name: data.name,
       description: data.description,
       task_chain: [
