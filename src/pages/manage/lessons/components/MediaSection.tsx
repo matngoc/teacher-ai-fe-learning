@@ -92,9 +92,10 @@ export function MediaSection({
         <button
           type="button"
           onClick={handleAdd}
-          className="aspect-square border-2 border-dashed rounded-lg flex items-center justify-center hover:bg-gray-100 transition-colors"
+          className="aspect-square border-2 border-dashed rounded-lg flex flex-col items-center justify-center hover:bg-gray-100 transition-colors gap-1"
         >
           <Plus className="h-6 w-6 text-gray-400" />
+          <span className="text-xs text-gray-500">Add media</span>
         </button>
       </div>
 

@@ -135,7 +135,7 @@ export default function LessonFormPage() {
               ]}
             >
               <TextArea
-                rows={4}
+                rows={1}
                 placeholder="Nhập mô tả bài học..."
                 size="large"
               />
@@ -149,7 +149,7 @@ export default function LessonFormPage() {
               ]}
             >
               <TextArea
-                rows={6}
+                rows={12}
                 placeholder="Nhập system prompt cho AI..."
                 size="large"
               />
@@ -187,8 +187,8 @@ export default function LessonFormPage() {
 
         <Card className="mt-6" title="Hướng dẫn">
           <div className="space-y-2 text-gray-600">
-            <p>• <strong>System Prompt:</strong> Hướng dẫn chi tiết cho AI về cách thức tương tác và vai trò trong bài học</p>
-            <p>• <strong>Checkpoints:</strong> Các điểm kiểm tra trong bài học. Có thể chỉnh sửa trực tiếp JSON hoặc cài thêm dependencies để dùng visual editor</p>
+            <p>• <strong>System Prompt:</strong> Mô tả persona cho AI</p>
+            <p>• <strong>Checkpoints:</strong> Các điểm tương tác trong bài học.</p>
             <p>• <strong>Loại Checkpoint:</strong> Narrative (câu chuyện, giới thiệu) hoặc CTA (câu hỏi, tương tác)</p>
           </div>
         </Card>
