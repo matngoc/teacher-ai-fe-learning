@@ -1,18 +1,187 @@
-.login-form{
-  min-width: 400px;
-  background: var(--form-background);
-  padding: 20px;
-  border-radius: 10px;
-}
-.login-container{
-  background: url("../../../public/background.jpg") no-repeat center center fixed;
+.login-container {
+  background: url("../../../public/background.png") no-repeat center center fixed;
+  background-size: cover;
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: 100vh;
   min-width: 100vw;
+  position: relative;
+  overflow: hidden;
 }
-.logo-login{
-  width: 80px;
-  height: 60px;
+
+.login-container::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+  background-size: 50px 50px;
+  animation: drift 20s linear infinite;
+  z-index: 0;
+}
+
+@keyframes drift {
+  0% {
+    transform: translate(0, 0);
+  }
+  100% {
+    transform: translate(50px, 50px);
+  }
+}
+
+.login-wrapper {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+.login-form {
+  width: 100%;
+  max-width: 450px;
+  background: var(--background);
+  padding: 30px 40px 40px 30px;
+  border-radius: 20px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  position: relative;
+  z-index: 1;
+}
+
+.login-form-header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.logo-login {
+  max-width: 100px;
+  max-height: 100px;
+  margin-bottom: 20px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+.login-form-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #2c3e50;
+  margin: 0 0 10px 0;
+  letter-spacing: -0.5px;
+}
+
+.login-form-subtitle {
+  font-size: 14px;
+  color: #7f8c8d;
+  margin: 0;
+}
+
+.login-form :global(.ant-form-item) {
+  margin-bottom: 20px;
+}
+
+.login-form :global(.ant-form-item-label) {
+  display: none;
+}
+
+.login-form :global(.ant-input),
+.login-form :global(.ant-input-affix-wrapper) {
+  height: 45px;
+  font-size: 14px;
+  border: 2px solid #e0e0e0;
+  border-radius: 10px;
+  transition: all 0.3s ease;
+  background-color: #fafafa;
+}
+
+.login-form :global(.ant-input::placeholder),
+.login-form :global(.ant-input-affix-wrapper::placeholder) {
+  color: #bdc3c7;
+}
+
+.login-form :global(.ant-input:hover),
+.login-form :global(.ant-input-affix-wrapper:hover) {
+  border-color: #667eea;
+  background-color: white;
+}
+
+.login-form :global(.ant-input:focus),
+.login-form :global(.ant-input-affix-wrapper:focus),
+.login-form :global(.ant-input-focused),
+.login-form :global(.ant-input-affix-wrapper-focused) {
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  background-color: white;
+}
+
+.login-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 30px;
+}
+
+.login-form :global(.ant-btn-primary) {
+  height: 45px;
+  font-size: 16px;
+  font-weight: 600;
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.login-form :global(.ant-btn-primary:hover) {
+  background: linear-gradient(135deg, #5568d3 0%, #6b3f91 100%);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+  transform: translateY(-2px);
+}
+
+.login-form :global(.ant-btn-primary:active) {
+  transform: translateY(0);
+}
+
+.login-form :global(.ant-btn-default) {
+  height: 45px;
+  font-size: 16px;
+  font-weight: 600;
+  border: 2px solid #667eea;
+  border-radius: 10px;
+  color: #667eea;
+  background-color: white;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.login-form :global(.ant-btn-default:hover) {
+  background-color: #f5f7ff;
+  border-color: #5568d3;
+  color: #5568d3;
+  transform: translateY(-2px);
+}
+
+.login-form :global(.ant-btn-default:active) {
+  transform: translateY(0);
+}
+
+.login-form :global(.ant-btn) {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.login-form :global(.anticon) {
+  font-size: 16px;
 }

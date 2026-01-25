@@ -1,10 +1,10 @@
 import { Modal, Form } from "antd";
 import { useSelector, useDispatch } from "react-redux";
-import type { RootState } from "../../../stores";
-import type { AppDispatch } from "../../../stores";
+import type { RootState } from '~/stores';
+import type { AppDispatch } from '~/stores';
 import {useEffect, useState} from "react";
-import {userActions} from "../../../stores/userSlice.ts";
-import {BaseTableCrud} from "../../../core/components/table";
+import {userActions} from '~/stores/userSlice.ts';
+import {BaseTableCrud} from '~/core/components/table';
 import type {ColumnsType} from "antd/es/table";
 import DateUtil from "../../../core/utils/dateUtil.ts";
 import {CreateOrUpdateUserForm} from "./CreatorOrUpdateForm.tsx";
@@ -74,15 +74,23 @@ export default function UserPage() {
     return (
         <>
             <BaseTableCrud
-                columns={columns}
-                data={list}
-                total={total}
-                page={page}
-                loading={loading}
-                onFilterChange={(kw) => dispatch(userActions.applyFilters(kw))}
-                onResetFilter={() => dispatch(userActions.resetFilters())}
-                onPageChange={(p) => dispatch(userActions.setPage(p))}
-                onCreate={() => setModalOpen(true)}
+              columns={columns}
+              data={list}
+              total={total}
+              page={page}
+              pageSize={pageSize}
+              loading={loading}
+              breadcrumbs={[
+                  {
+                      href: '/page/user',
+                      title: 'Người dùng',
+                  },
+              ]}
+              onFilterChange={(kw) => dispatch(userActions.applyFilters(kw))}
+              onResetFilter={() => dispatch(userActions.resetFilters())}
+              onPageChange={(p) => dispatch(userActions.setPage(p))}
+              onPageSizeChange={(size) => dispatch(userActions.setPageSize(size))}
+              onCreate={() => setModalOpen(true)}
                 onEdit={(record) => {
                     setEditRecord(record);
                     form.setFieldsValue(record);

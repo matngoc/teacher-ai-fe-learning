@@ -2,7 +2,14 @@ import {
   CreateRoleDto,
   PageRequestDto,
   UpdateRoleDto,
-
+  IList,
+  List,
+  IListResult,
+  ListResultDto,
+  IPagedResult,
+  PagedResultDto,
+  Dictionary,
+  IDictionary,
   IRequestOptions,
   IRequestConfig,
   getConfigs,
@@ -65,7 +72,7 @@ export class RolesService {
   static getById(
     params: {
       /**  */
-      id: string;
+      id: number;
     } = {} as any,
     options: IRequestOptions = {}
   ): Promise<any> {
@@ -84,7 +91,7 @@ export class RolesService {
   static update(
     params: {
       /**  */
-      id: string;
+      id: number;
       /** requestBody */
       body?: UpdateRoleDto;
     } = {} as any,
@@ -113,7 +120,7 @@ export class RolesService {
   static remove(
     params: {
       /**  */
-      id: string;
+      id: number;
     } = {} as any,
     options: IRequestOptions = {}
   ): Promise<any> {

@@ -66,27 +66,27 @@ export const UploadImage = ({
     };
 
     const uploadButton = (
-        <button style={{ border: 0, background: 'none', color: "gray" }} type="button">
-            {loading ? <LoadingOutlined /> : <PlusOutlined />}
-            <div style={{ marginTop: 8, fontSize: 12 }}>Tải ảnh lên</div>
-        </button>
+      <button style={{ border: 0, background: 'none', color: "gray" }} type="button">
+          {loading ? <LoadingOutlined /> : <PlusOutlined />}
+          <div style={{ marginTop: 8, fontSize: 12 }}>Tải ảnh lên</div>
+      </button>
     );
 
     return (
-        <Upload
-            name="avatar"
-            listType="picture-card"
-            className="avatar-uploader"
-            showUploadList={false}
-            customRequest={customRequest}
-            beforeUpload={beforeUpload}
-            onChange={handleChange}
-        >
-            {value ? (
-                <img draggable={false} src={value} alt="avatar" style={{ width: '100%' }} />
-            ) : (
-                uploadButton
-            )}
-        </Upload>
+      <Upload
+        name="avatar"
+        listType="picture-card"
+        className="avatar-uploader"
+        showUploadList={false}
+        customRequest={customRequest}
+        beforeUpload={beforeUpload}
+        onChange={handleChange}
+      >
+          {value ? (
+            <img draggable={false} src={value} alt="avatar" style={{ width: '100%' }} />
+          ) : (
+            uploadButton
+          )}
+      </Upload>
     );
 };

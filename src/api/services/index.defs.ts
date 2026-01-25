@@ -100,19 +100,7 @@ export class PagedResultDto<T = any> implements IPagedResult<T> {
 // empty
 
 /** CreateUserDto */
-export interface CreateUserDto {
-  /**  */
-  email: string;
-
-  /**  */
-  description: string;
-
-  /**  */
-  roleId: string;
-
-  /**  */
-  password: string;
-}
+export interface CreateUserDto {}
 
 /** PageRequestDto */
 export interface PageRequestDto {
@@ -127,37 +115,13 @@ export interface PageRequestDto {
 }
 
 /** UpdateUserDto */
-export interface UpdateUserDto {
-  /**  */
-  email?: string;
-
-  /**  */
-  description?: string;
-
-  /**  */
-  roleId?: string;
-
-  /**  */
-  password?: string;
-}
+export interface UpdateUserDto {}
 
 /** CreateRoleDto */
-export interface CreateRoleDto {
-  /**  */
-  name: string;
-
-  /**  */
-  description: string;
-}
+export interface CreateRoleDto {}
 
 /** UpdateRoleDto */
-export interface UpdateRoleDto {
-  /**  */
-  name?: string;
-
-  /**  */
-  description?: string;
-}
+export interface UpdateRoleDto {}
 
 /** LoginDto */
 export interface LoginDto {
@@ -165,143 +129,14 @@ export interface LoginDto {
   email: string;
 }
 
+/** RefreshTokenDto */
+export interface RefreshTokenDto {
+  /**  */
+  refreshToken: string;
+}
+
 /** RegisterDto */
 export interface RegisterDto {
   /**  */
   email: string;
-}
-
-/** CreateCampaignDto */
-export interface CreateCampaignDto {
-  /**  */
-  name: string;
-
-  /**  */
-  description: string;
-
-  /**  */
-  featureImage: string;
-
-  /**  */
-  publicResult: boolean;
-
-  /**  */
-  startTime: Date;
-
-  /**  */
-  endTime: Date;
-}
-
-/** UpdateCampaignDto */
-export interface UpdateCampaignDto {
-  /**  */
-  name?: string;
-
-  /**  */
-  description?: string;
-
-  /**  */
-  featureImage?: string;
-
-  /**  */
-  publicResult?: boolean;
-
-  /**  */
-  startTime?: Date;
-
-  /**  */
-  endTime?: Date;
-}
-
-/** ObjectId */
-export interface ObjectId {}
-
-/** CreateVoteDto */
-export interface CreateVoteDto {
-  /**  */
-  name: string;
-
-  /**  */
-  description: string;
-
-  /**  */
-  featureImage: string;
-
-  /**  */
-  options: string[];
-
-  /**  */
-  renderType: number;
-
-  /**  */
-  tags: string[];
-
-  /**  */
-  campaignId: ObjectId;
-
-  /**  */
-  createdDate: Date;
-}
-
-/** UpdateVoteDto */
-export interface UpdateVoteDto {
-  /**  */
-  name?: string;
-
-  /**  */
-  description?: string;
-
-  /**  */
-  featureImage?: string;
-
-  /**  */
-  options?: string[];
-
-  /**  */
-  renderType?: number;
-
-  /**  */
-  tags?: string[];
-
-  /**  */
-  campaignId?: ObjectId;
-
-  /**  */
-  createdDate?: Date;
-}
-
-/** CreateTransactionDto */
-export interface CreateTransactionDto {
-  /**  */
-  voterId: string;
-
-  /**  */
-  choose: number;
-
-  /**  */
-  voteId: string;
-}
-
-/** PageRequestTransactionDto */
-export interface PageRequestTransactionDto {
-  /**  */
-  filters: object;
-
-  /**  */
-  page: number;
-
-  /**  */
-  size: number;
-}
-
-/** UpdateTransactionDto */
-export interface UpdateTransactionDto {
-  /**  */
-  voterId?: string;
-
-  /**  */
-  choose?: number;
-
-  /**  */
-  voteId?: string;
 }

@@ -1,4 +1,4 @@
-import {Breadcrumb, Divider} from "antd";
+import {Breadcrumb} from "antd";
 import {HomeOutlined} from "@ant-design/icons";
 import type {BreadcrumbItemType} from "antd/es/breadcrumb/Breadcrumb";
 import React from "react";
@@ -9,25 +9,22 @@ interface BaseBreadcrumbProps {
 }
 export const BaseBreadcrumb: React.FC<BaseBreadcrumbProps> = ({items, extraButton}) => {
   return (
-      <>
-          <div className={"w-full flex justify-between"}>
-              <Breadcrumb
-                  style={{fontSize: "1rem", fontWeight: 500}}
-                  items={[
-                      {
-                          href: '',
-                          title: <HomeOutlined style={{fontSize: "1rem"}}/>,
-                      },
-                      ...(items ?? [])
-                  ]}
-              />
-              {
-                  extraButton && (
-                      extraButton
-                  )
-              }
-          </div>
-          <Divider style={{marginTop: 8, marginBottom: 16}} />
-      </>
+      <div className="base-breadcrumb-container">
+          <Breadcrumb
+              className="base-breadcrumb"
+              items={[
+                  {
+                      href: '',
+                      title: <HomeOutlined className="base-breadcrumb-icon"/>,
+                  },
+                  ...(items ?? [])
+              ]}
+          />
+          {extraButton && (
+              <div className="base-breadcrumb-actions">
+                  {extraButton}
+              </div>
+          )}
+      </div>
   )
 }

@@ -1,7 +1,7 @@
 @import "tailwindcss";
 :root {
-  --background: #DDF4E7;
-  --foreground: #DDF4E7;
+  --background: #d0ccff;
+  --foreground: #d0ccff;
 }
 
 @theme inline {
@@ -10,37 +10,37 @@
 }
 
 :root {
-  --background: #DDF4E7;
-  --foreground: #DDF4E7;
-  --primary: #187068;
-  --primary-bold: #13463d;
-  --secondary: #67AE6E;
-  --tertiary: #90C67C;
+  --background: #d0ccff;
+  --foreground: #d0ccff;
+  --primary: #6155F5;
+  --primary-bold: #383286;
+  --secondary: #FF7601;
+  --tertiary: #ffa052;
   --extra: #E1EEBC;
   --error: #F44336;
   --success: #28a745;
-  --form-background: #DDF4E7;
+  --form-background: #d0ccff;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #DDF4E7;
-    --foreground: #DDF4E7;
-    --primary: #187068;
-    --primary-bold: #13463d;
-    --secondary: #67AE6E;
-    --tertiary: #90C67C;
+    --background: #d0ccff;
+    --foreground: #d0ccff;
+    --primary: #6155F5;
+    --primary-bold: #383286;
+    --secondary: #FF7601;
+    --tertiary: #ffa052;
     --extra: #E1EEBC;
     --error: #F44336;
     --success: #28a745;
-    --form-background: #DDF4E7;
+    --form-background: #d0ccff;
   }
 }
 
 body {
-  background: var(--background) !important;
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: #f5f5f5 !important;
+  color: #333;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 .ant-input-affix-wrapper:hover{
   border: 1px solid var(--primary) !important;

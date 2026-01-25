@@ -43,10 +43,18 @@ export default function RolePage() {
             data={list}
             total={total}
             page={page}
+            pageSize={pageSize}
             loading={loading}
+            breadcrumbs={[
+              {
+                href: '/page/role',
+                title: 'Vai trò',
+              },
+            ]}
             onFilterChange={(kw) => dispatch(roleActions.applyFilters(kw))}
             onResetFilter={() => dispatch(roleActions.resetFilters())}
             onPageChange={(p) => dispatch(roleActions.setPage(p))}
+            onPageSizeChange={(size) => dispatch(roleActions.setPageSize(size))}
             onCreate={() => setModalOpen(true)}
             onEdit={(record) => {
               setEditRecord(record);

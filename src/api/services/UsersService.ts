@@ -2,7 +2,14 @@ import {
   CreateUserDto,
   PageRequestDto,
   UpdateUserDto,
-
+  IList,
+  List,
+  IListResult,
+  ListResultDto,
+  IPagedResult,
+  PagedResultDto,
+  Dictionary,
+  IDictionary,
   IRequestOptions,
   IRequestConfig,
   getConfigs,
@@ -65,7 +72,7 @@ export class UsersService {
   static getById(
     params: {
       /**  */
-      id: string;
+      id: number;
     } = {} as any,
     options: IRequestOptions = {}
   ): Promise<any> {
@@ -84,7 +91,7 @@ export class UsersService {
   static update(
     params: {
       /**  */
-      id: string;
+      id: number;
       /** requestBody */
       body?: UpdateUserDto;
     } = {} as any,
@@ -113,7 +120,7 @@ export class UsersService {
   static remove(
     params: {
       /**  */
-      id: string;
+      id: number;
     } = {} as any,
     options: IRequestOptions = {}
   ): Promise<any> {
