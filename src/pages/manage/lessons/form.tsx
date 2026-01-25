@@ -65,18 +65,22 @@ export default function LessonFormPage() {
         checkpoints,
       };
 
+      let response;
       if (isEditMode) {
-        await LessonService.updateBot({
+        response = await LessonService.updateBot({
           id: parseInt(lessonId!),
           ...data,
         });
-        toast.success('Cập nhật bài học thành công!');
       } else {
-        await LessonService.createBot(data);
-        toast.success('Tạo bài học mới thành công!');
+        response = await LessonService.createBot(data);
       }
 
-      navigate('/manage/lessons');
+      if (response.status === 0) {
+        toast.success(isEditMode ? 'Cập nhật bài học thành công!' : 'Tạo bài học mới thành công!');
+        navigate('/manage/lessons');
+      } else {
+        toast.error(response.msg || (isEditMode ? 'Cập nhật không thành công' : 'Tạo bài học không thành công'));
+      }
     } catch (error) {
       console.error('Error saving lesson:', error);
       toast.error(isEditMode ? 'Lỗi khi cập nhật bài học' : 'Lỗi khi tạo bài học');
