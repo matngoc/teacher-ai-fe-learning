@@ -34,6 +34,7 @@ export const VoiceChatContainer: React.FC<VoiceChatContainerProps> = ({
   const { config, moods, connectionStatus } = useSelector((state: RootState) => state.learner);
   
   const [conversationId, setConversationId] = useState<string>('');
+  const [hasConnectionError, setHasConnectionError] = useState(false);
   const turnCompleteRef = useRef(false);
   const lastAudioEndTimeRef = useRef(0);
   const autoReopenTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -50,10 +51,12 @@ export const VoiceChatContainer: React.FC<VoiceChatContainerProps> = ({
     onClose: () => {
       dispatch(learnerActions.setConnectionStatus('disconnected'));
       dispatch(learnerActions.addLog({ message: 'WebSocket disconnected', type: 'info' }));
+      setHasConnectionError(true);
     },
     onError: (error) => {
       dispatch(learnerActions.addLog({ message: `WebSocket error: ${error}`, type: 'error' }));
       toast.error('WebSocket connection error');
+      setHasConnectionError(true);
     },
     onMessage: handleWebSocketMessage,
     onBinaryData: handleBinaryAudioData,
@@ -100,6 +103,40 @@ export const VoiceChatContainer: React.FC<VoiceChatContainerProps> = ({
             message: '✅ Displayed queued transcript', 
             type: 'info' 
           }));
+        } else if (item.type === 'board') {
+          // Apply queued board action
+          if (item.boardAction === 'init' && item.boardLayout) {
+            dispatch(learnerActions.initBoard({ layout: item.boardLayout }));
+            dispatch(learnerActions.addLog({ 
+              message: `✅ Displayed queued board init with ${item.boardLayout} layout`, 
+              type: 'info' 
+            }));
+          } else if (item.boardAction === 'add' && item.boardSegments) {
+            dispatch(learnerActions.addBoardText(item.boardSegments));
+            dispatch(learnerActions.addLog({ 
+              message: `✅ Displayed queued board add with ${item.boardSegments.length} segments`, 
+              type: 'info' 
+            }));
+          } else if (item.boardAction === 'update' && item.boardSegments) {
+            dispatch(learnerActions.updateBoardText(item.boardSegments));
+            dispatch(learnerActions.addLog({ 
+              message: `✅ Displayed queued board update with ${item.boardSegments.length} segments`, 
+              type: 'info' 
+            }));
+          } else if (item.boardAction === 'remove' && item.boardSegments) {
+            const idsToRemove = item.boardSegments.map(s => s.id);
+            dispatch(learnerActions.removeBoardText(idsToRemove));
+            dispatch(learnerActions.addLog({ 
+              message: `✅ Displayed queued board remove ${idsToRemove.length} segments`, 
+              type: 'info' 
+            }));
+          } else if (item.boardAction === 'clear') {
+            dispatch(learnerActions.clearBoard());
+            dispatch(learnerActions.addLog({ 
+              message: '✅ Displayed queued board clear', 
+              type: 'info' 
+            }));
+          }
         }
       });
     }
@@ -209,11 +246,20 @@ export const VoiceChatContainer: React.FC<VoiceChatContainerProps> = ({
         // Handle image/mood/servo from other_modalities
         console.log('📨 [OTHER_MODALITIES MESSAGE]', { data: message.data, fullMessage: message });
         if (message.data) {
-          handleImageMessage({
-            image_url: message.data.image,
-            mood: message.data.mood,
-            servo: message.data.servo,
-          });
+          // Handle board if present
+          if (message.data.board) {
+            console.log('📋 [BOARD DATA]', message.data.board);
+            handleBoardMessage(message.data.board);
+          }
+          // Handle image/mood/servo if present
+          if (message.data.image || message.data.mood || message.data.servo) {
+            console.log('🖼️ [IMAGE/MOOD DATA]', { image: message.data.image, mood: message.data.mood, servo: message.data.servo });
+            handleImageMessage({
+              image_url: message.data.image,
+              mood: message.data.mood,
+              servo: message.data.servo,
+            });
+          }
         }
         break;
 
@@ -398,6 +444,78 @@ export const VoiceChatContainer: React.FC<VoiceChatContainerProps> = ({
     }
   }, [moods, config.mode, audioPlayer, mediaQueue, dispatch]);
 
+  // Handle board messages
+  const handleBoardMessage = useCallback((boardData: any) => {
+    const { action, layout, data } = boardData;
+    
+    console.log('📋 [HANDLE BOARD MESSAGE]', { action, layout, data });
+    
+    const isAudioPlaying = audioPlayer.isPlaying();
+    const currentTime = audioPlayer.getCurrentTime();
+    const currentEndTime = lastAudioEndTimeRef.current;
+    
+    console.log('🎵 [AUDIO STATUS FOR BOARD]', { 
+      isAudioPlaying, 
+      currentTime, 
+      currentEndTime,
+      willQueue: isAudioPlaying && currentEndTime > currentTime
+    });
+    
+    if (action === 'init') {
+      if (isAudioPlaying && currentEndTime > currentTime) {
+        console.log('📥 [QUEUE BOARD INIT]', { layout: layout || 'normal', endTime: currentEndTime });
+        mediaQueue.queueBoard('init', currentEndTime, layout || 'normal', []);
+        dispatch(learnerActions.addLog({ message: `📥 Queued board init with ${layout || 'normal'} layout`, type: 'info' }));
+      } else {
+        dispatch(learnerActions.initBoard({ layout: layout || 'normal' }));
+        dispatch(learnerActions.addLog({ message: `📋 Board initialized with ${layout || 'normal'} layout`, type: 'info' }));
+      }
+    } else if (action === 'add') {
+      if (data && Array.isArray(data)) {
+        if (isAudioPlaying && currentEndTime > currentTime) {
+          console.log('📥 [QUEUE BOARD ADD]', { segments: data, endTime: currentEndTime });
+          mediaQueue.queueBoard('add', currentEndTime, undefined, data);
+          dispatch(learnerActions.addLog({ message: `📥 Queued board add with ${data.length} segment(s)`, type: 'info' }));
+        } else {
+          dispatch(learnerActions.addBoardText(data));
+          dispatch(learnerActions.addLog({ message: `📋 Added ${data.length} text segment(s) to board`, type: 'info' }));
+        }
+      }
+    } else if (action === 'update') {
+      if (data && Array.isArray(data)) {
+        if (isAudioPlaying && currentEndTime > currentTime) {
+          console.log('📥 [QUEUE BOARD UPDATE]', { segments: data, endTime: currentEndTime });
+          mediaQueue.queueBoard('update', currentEndTime, undefined, data);
+          dispatch(learnerActions.addLog({ message: `📥 Queued board update with ${data.length} segment(s)`, type: 'info' }));
+        } else {
+          dispatch(learnerActions.updateBoardText(data));
+          dispatch(learnerActions.addLog({ message: `📋 Updated ${data.length} text segment(s) on board`, type: 'info' }));
+        }
+      }
+    } else if (action === 'remove') {
+      if (data && Array.isArray(data)) {
+        if (isAudioPlaying && currentEndTime > currentTime) {
+          console.log('📥 [QUEUE BOARD REMOVE]', { ids: data.map(item => item.id), endTime: currentEndTime });
+          mediaQueue.queueBoard('remove', currentEndTime, undefined, data);
+          dispatch(learnerActions.addLog({ message: `📥 Queued board remove ${data.length} segment(s)`, type: 'info' }));
+        } else {
+          const idsToRemove = data.map(item => item.id);
+          dispatch(learnerActions.removeBoardText(idsToRemove));
+          dispatch(learnerActions.addLog({ message: `📋 Removed ${idsToRemove.length} text segment(s) from board`, type: 'info' }));
+        }
+      }
+    } else if (action === 'clear') {
+      if (isAudioPlaying && currentEndTime > currentTime) {
+        console.log('📥 [QUEUE BOARD CLEAR]', { endTime: currentEndTime });
+        mediaQueue.queueBoard('clear', currentEndTime);
+        dispatch(learnerActions.addLog({ message: '📥 Queued board clear', type: 'info' }));
+      } else {
+        dispatch(learnerActions.clearBoard());
+        dispatch(learnerActions.addLog({ message: '📋 Board cleared', type: 'info' }));
+      }
+    }
+  }, [audioPlayer, mediaQueue, dispatch]);
+
   // Handle turn complete
   const handleTurnComplete = useCallback((_message: any) => {
     turnCompleteRef.current = true;
@@ -500,10 +618,12 @@ export const VoiceChatContainer: React.FC<VoiceChatContainerProps> = ({
       });
 
       toast.success('Connected successfully!');
+      setHasConnectionError(false); // Clear error on successful connection
     } catch (error: any) {
       dispatch(learnerActions.addLog({ message: `Connection failed: ${error.message}`, type: 'error' }));
       dispatch(learnerActions.setConnectionStatus('disconnected'));
       toast.error(`Connection failed: ${error.message}`);
+      setHasConnectionError(true); // Set error flag
     }
   }, [config, conversationId, wsConnect, sendMessage, audioRecorder, audioPlayer, dispatch]);
 
@@ -518,10 +638,14 @@ export const VoiceChatContainer: React.FC<VoiceChatContainerProps> = ({
       clearTimeout(autoReopenTimerRef.current);
     }
 
+    // Clear board and media queue
+    dispatch(learnerActions.hideBoard());
+    mediaQueue.clearQueue();
+
     dispatch(learnerActions.setIsRecording(false));
     dispatch(learnerActions.setConnectionStatus('disconnected'));
     dispatch(learnerActions.addLog({ message: 'Disconnected', type: 'info' }));
-  }, [wsDisconnect, audioRecorder, audioPlayer, speechRecognition, dispatch]);
+  }, [wsDisconnect, audioRecorder, audioPlayer, speechRecognition, mediaQueue, dispatch]);
 
   // Mic press handler
   const handleMicPress = useCallback(() => {
@@ -691,6 +815,7 @@ export const VoiceChatContainer: React.FC<VoiceChatContainerProps> = ({
             onMicRelease={handleMicRelease}
             disabled={connectionStatus === 'connecting'}
             hideConnectionControls={true}
+            hasError={hasConnectionError}
           />
         </div>
       </div>
@@ -707,6 +832,7 @@ export const VoiceChatContainer: React.FC<VoiceChatContainerProps> = ({
         onMicPress={handleMicPress}
         onMicRelease={handleMicRelease}
         disabled={connectionStatus === 'connecting'}
+        hasError={hasConnectionError}
       />
 
       {config.mode === 'text' ? (

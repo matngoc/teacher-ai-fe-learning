@@ -1,13 +1,14 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import type { RootState } from '~/stores';
+import { Board } from './Board';
 
 interface AudioVisualizerProps {
   showCaption?: boolean;
 }
 
 export const AudioVisualizer: React.FC<AudioVisualizerProps> = ({ showCaption = true }) => {
-  const { currentImage, config, moods, transcript, connectionStatus } = useSelector((state: RootState) => state.learner);
+  const { currentImage, currentBoard, config, moods, transcript, connectionStatus } = useSelector((state: RootState) => state.learner);
 
   // Only show for voice modes
   if (config.mode === 'text') {
@@ -47,10 +48,35 @@ export const AudioVisualizer: React.FC<AudioVisualizerProps> = ({ showCaption = 
 
   const hasImage = currentImage?.url && currentImage.url.trim() !== '';
   const moodGifUrl = getMoodGifUrl(currentImage?.mood);
+  
+  // Show board if it exists and is visible
+  const showBoard = currentBoard && currentBoard.isVisible;
 
   return (
     <div className="text-center my-5">
-      {hasImage ? (
+      {showBoard ? (
+        // Board mode - show whiteboard with caption below
+        <div className="relative">
+          <Board />
+          
+          {/* Caption below board */}
+          {showCaption && transcript && (
+            <div className="mt-3 flex justify-center">
+              <div 
+                className="rounded-lg px-4 py-2 backdrop-blur-sm inline-block"
+                style={{ 
+                  backgroundColor: 'rgba(0, 0, 0, 0.75)',
+                  color: 'white'
+                }}
+              >
+                <div className="text-base leading-relaxed">
+                  {transcript}
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      ) : hasImage ? (
         // Has image - main area full width with avatar at top-right corner
         <div className="relative rounded-2xl overflow-hidden shadow-2xl bg-red-100 border-4 border-red-200 max-w-full mx-auto">
           {/* Image Area (Red) - Full width */}

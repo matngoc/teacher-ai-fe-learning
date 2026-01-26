@@ -11,6 +11,7 @@ interface AudioControlsProps {
   onMicRelease: () => void;
   disabled?: boolean;
   hideConnectionControls?: boolean;
+  hasError?: boolean;
 }
 
 export const AudioControls: React.FC<AudioControlsProps> = ({
@@ -20,10 +21,19 @@ export const AudioControls: React.FC<AudioControlsProps> = ({
   onMicRelease,
   disabled = false,
   hideConnectionControls = false,
+  hasError = false,
 }) => {
   const { connectionStatus, isRecording, isHoldMode, config } = useSelector((state: RootState) => state.learner);
   const isConnected = connectionStatus === 'connected' || connectionStatus === 'listening';
   const isConnecting = connectionStatus === 'connecting';
+
+  // Retry handler: disconnect then reconnect
+  const handleRetry = () => {
+    onDisconnect();
+    setTimeout(() => {
+      onConnect();
+    }, 500);
+  };
 
   const getStatusDisplay = () => {
     switch (connectionStatus) {
@@ -63,15 +73,29 @@ export const AudioControls: React.FC<AudioControlsProps> = ({
       {!hideConnectionControls && (
         <Space className="mb-5">
           {!isConnected && !isConnecting && (
-            <Button
-              type="primary"
-              size="large"
-              onClick={onConnect}
-              disabled={disabled}
-              className="px-8 py-2 h-auto rounded-full shadow-lg hover:shadow-xl transition-all"
-            >
-              🔌 Connect & Auto-Start
-            </Button>
+            <>
+              <Button
+                type="primary"
+                size="large"
+                onClick={onConnect}
+                disabled={disabled}
+                className="px-8 py-2 h-auto rounded-full shadow-lg hover:shadow-xl transition-all"
+              >
+                🔌 Connect & Auto-Start
+              </Button>
+              
+              {hasError && (
+                <Button
+                  type="default"
+                  size="large"
+                  onClick={handleRetry}
+                  disabled={disabled}
+                  className="px-8 py-2 h-auto rounded-full shadow-lg hover:shadow-xl transition-all border-orange-500 text-orange-600 hover:border-orange-600 hover:text-orange-700"
+                >
+                  🔄 Retry Connection
+                </Button>
+              )}
+            </>
           )}
           
           {(isConnected || isConnecting) && (
@@ -115,15 +139,18 @@ export const AudioControls: React.FC<AudioControlsProps> = ({
               borderRadius: '50%',
               borderColor: isHoldMode ? '#c2410c' : isRecording ? '#be185d' : '#6b21a8'
             }}
+            onClick={!isConnected && !disabled ? (hasError ? handleRetry : onConnect) : undefined}
             onMouseDown={!disabled && isConnected ? onMicPress : undefined}
             onMouseUp={!disabled && isConnected ? onMicRelease : undefined}
             onTouchStart={!disabled && isConnected ? onMicPress : undefined}
             onTouchEnd={!disabled && isConnected ? onMicRelease : undefined}
-            disabled={!isConnected || disabled}
+            disabled={disabled && !hasError}
           >
             {/* Icon based on state */}
             <div className="text-white text-7xl">
-              {!isConnected ? '🔌' : (isHoldMode || isRecording) ? '👂' : '🗣️'}
+              {!isConnected 
+                ? (hasError ? '🔄' : '🔌')
+                : (isHoldMode || isRecording) ? '👂' : '🗣️'}
             </div>
           </button>
           
@@ -131,7 +158,7 @@ export const AudioControls: React.FC<AudioControlsProps> = ({
           <div className="text-center mt-6 max-w-xs">
             <div className="text-gray-800 font-semibold text-lg mb-2">
               {!isConnected
-                ? 'Not connected'
+                ? (hasError ? 'Connection failed' : 'Not connected')
                 : isHoldMode
                   ? 'Hana listening...'
                   : isRecording
@@ -141,7 +168,7 @@ export const AudioControls: React.FC<AudioControlsProps> = ({
             </div>
             <div className="text-gray-600 text-sm flex items-center justify-center gap-1">
               {!isConnected
-                ? 'Connect to start'
+                ? (hasError ? 'Click to retry' : 'Connect to start')
                 : isHoldMode
                   ? <>Release <img src={SpaceKeyIcon} alt="space" className="inline w-4 h-4" /> to stop</>
                   : isRecording
