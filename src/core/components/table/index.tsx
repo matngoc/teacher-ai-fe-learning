@@ -31,6 +31,7 @@ interface Props<T> {
   extraSearchFields?: JSX.Element;
   extraHeaderButton?: JSX.Element;
   breadcrumbs?: any[];
+  scroll?: { x?: number | true | string; y?: number | string };
 }
 
 export function BaseTableCrud<T extends { id: string }>(
@@ -51,7 +52,8 @@ export function BaseTableCrud<T extends { id: string }>(
     onResetFilter,
     extraSearchFields,
     extraHeaderButton,
-    breadcrumbs
+    breadcrumbs,
+    scroll
   }: Props<T>) {
 
   const [deleteId, setDeleteId] = useState<string | null>(null);
@@ -181,7 +183,7 @@ export function BaseTableCrud<T extends { id: string }>(
           }
           dataSource={data}
           loading={loading}
-          scroll={{ x: true }}
+          scroll={scroll || { x: true }}
           pagination={{
             current: page,
             total,

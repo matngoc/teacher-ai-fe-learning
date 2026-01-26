@@ -138,5 +138,26 @@ export interface RefreshTokenDto {
 /** RegisterDto */
 export interface RegisterDto {
   /**  */
+  fullName: string;
+
+  /**  */
+  age: string;
+
+  /**  */
+  job: string;
+
+  /**  */
+  motivation: string;
+
+  /**  */
+  englishLevel: string;
+
+  /**  */
+  favouriteTopic: string;
+
+  /**  */
   email: string;
+
+  /**  */
+  password: string;
 }

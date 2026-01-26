@@ -45,12 +45,47 @@
 .login-form {
   width: 100%;
   max-width: 450px;
+  max-height: 90vh;
   background: var(--background);
   padding: 30px 40px 40px 30px;
   border-radius: 20px;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
   position: relative;
   z-index: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+.register-form {
+  width: 100%;
+  max-width: 800px;
+  max-height: 90vh;
+  background: var(--background);
+  padding: 30px 40px 40px 30px;
+  border-radius: 20px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  position: relative;
+  z-index: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+
+.login-form::-webkit-scrollbar {
+  width: 8px;
+}
+
+.login-form::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.login-form::-webkit-scrollbar-thumb {
+  background: #667eea;
+  border-radius: 10px;
+}
+
+.login-form::-webkit-scrollbar-thumb:hover {
+  background: #5568d3;
 }
 
 .login-form-header {
@@ -88,6 +123,12 @@
 
 .login-form :global(.ant-form-item-label) {
   display: none;
+}
+
+.login-form :global(.ant-form-item-label > label) {
+  font-size: 14px;
+  font-weight: 600;
+  color: #2c3e50;
 }
 
 .login-form :global(.ant-input),
@@ -185,3 +226,99 @@
 .login-form :global(.anticon) {
   font-size: 16px;
 }
+
+/* Checkbox and Radio styling */
+.login-form :global(.ant-checkbox-group),
+.login-form :global(.ant-radio-group) {
+  width: 100%;
+}
+
+.login-form :global(.ant-checkbox-wrapper),
+.login-form :global(.ant-radio-wrapper) {
+  color: #2c3e50;
+  font-size: 14px;
+  margin: 0;
+  padding: 8px 12px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.login-form :global(.ant-checkbox-wrapper:hover),
+.login-form :global(.ant-radio-wrapper:hover) {
+  background-color: #f5f7ff;
+}
+
+.login-form :global(.ant-checkbox-checked .ant-checkbox-inner),
+.login-form :global(.ant-radio-checked .ant-radio-inner) {
+  background-color: #667eea;
+  border-color: #667eea;
+}
+
+.login-form :global(.ant-checkbox-wrapper:hover .ant-checkbox-inner),
+.login-form :global(.ant-radio-wrapper:hover .ant-radio-inner) {
+  border-color: #667eea;
+}
+
+/* InputNumber styling */
+.login-form :global(.ant-input-number) {
+  width: 100%;
+  height: 45px;
+  font-size: 14px;
+  border: 2px solid #e0e0e0;
+  border-radius: 10px;
+  background-color: #fafafa;
+}
+
+.login-form :global(.ant-input-number:hover) {
+  border-color: #667eea;
+  background-color: white;
+}
+
+.login-form :global(.ant-input-number-focused) {
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  background-color: white;
+}
+
+.login-form :global(.ant-input-number-input) {
+  height: 41px;
+}
+
+/* Select styling */
+.login-form :global(.ant-select) {
+  width: 100%;
+}
+
+.login-form :global(.ant-select .ant-select-selector) {
+  height: auto;
+  min-height: 45px;
+  font-size: 14px;
+  border: 2px solid #e0e0e0 !important;
+  border-radius: 10px !important;
+  background-color: #fafafa !important;
+  padding: 6px 11px;
+}
+
+.login-form :global(.ant-select:hover .ant-select-selector) {
+  border-color: #667eea !important;
+  background-color: white !important;
+}
+
+.login-form :global(.ant-select-focused .ant-select-selector) {
+  border-color: #667eea !important;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1) !important;
+  background-color: white !important;
+}
+
+.login-form :global(.ant-select-multiple .ant-select-selection-item) {
+  background-color: #667eea;
+  border-color: #667eea;
+  color: white;
+  border-radius: 6px;
+}
+
+/* Form item with visible labels */
+.login-form :global(.ant-form-item-has-feedback .ant-form-item-label > label) {
+  display: block;
+}
+

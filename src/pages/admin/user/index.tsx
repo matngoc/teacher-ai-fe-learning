@@ -8,6 +8,7 @@ import {BaseTableCrud} from '~/core/components/table';
 import type {ColumnsType} from "antd/es/table";
 import DateUtil from "../../../core/utils/dateUtil.ts";
 import {CreateOrUpdateUserForm} from "./CreatorOrUpdateForm.tsx";
+import {CloseOutlined, CheckOutlined} from "@ant-design/icons";
 
 export default function UserPage() {
     const dispatch = useDispatch<AppDispatch>();
@@ -31,18 +32,100 @@ export default function UserPage() {
         {
             title: "Email",
             dataIndex: "email",
-            key: "email"
+            key: "email",
+            width: 200,
+        },
+        {
+            title: "Tên đầy đủ",
+            dataIndex: "fullName",
+            key: "fullName",
+            width: 150,
+        },
+        {
+            title: "Tuổi",
+            dataIndex: "age",
+            key: "age",
+            align: "center",
+            width: 80,
+        },
+        {
+            title: "Công việc",
+            dataIndex: "job",
+            key: "job",
+            width: 150,
+        },
+        {
+            title: "Trình độ tiếng Anh",
+            dataIndex: "englishLevel",
+            key: "englishLevel",
+            width: 150,
+            render: (value) => {
+                const levels: Record<string, string> = {
+                    'beginner': 'Gần như không nói được',
+                    'elementary': 'Nói được câu đơn giản',
+                    'pre_intermediate': 'Giao tiếp tình huống quen thuộc',
+                    'intermediate': 'Khá tự tin',
+                    'advanced': 'Rất tự tin'
+                };
+                return levels[value] || value;
+            }
+        },
+        {
+            title: "Mục đích học",
+            dataIndex: "motivation",
+            key: "motivation",
+            width: 200,
+            render: (value) => {
+                try {
+                    const motivations = JSON.parse(value || '[]');
+                    const motivationLabels: Record<string, string> = {
+                        'work_communication': 'Giao tiếp công việc',
+                        'interview_promotion': 'Phỏng vấn/thăng tiến',
+                        'daily_communication': 'Giao tiếp hàng ngày',
+                        'travel_international': 'Du lịch',
+                        'study_abroad': 'Học tập/du học',
+                        'confidence_with_foreigners': 'Tự tin với người nước ngoài'
+                    };
+                    return motivations.map((m: string) => motivationLabels[m] || m).join(', ');
+                } catch {
+                    return value;
+                }
+            }
+        },
+        {
+            title: "Chủ đề yêu thích",
+            dataIndex: "favouriteTopic",
+            key: "favouriteTopic",
+            width: 200,
+            render: (value) => {
+                try {
+                    const topics = JSON.parse(value || '[]');
+                    const topicLabels: Record<string, string> = {
+                        'work_career': 'Công việc & sự nghiệp',
+                        'daily_life': 'Đời sống hàng ngày',
+                        'travel': 'Du lịch',
+                        'self_development': 'Tâm lý - phát triển bản thân',
+                        'entertainment': 'Giải trí',
+                        'business_startup': 'Kinh doanh/khởi nghiệp'
+                    };
+                    return topics.map((t: string) => topicLabels[t] || t).join(', ');
+                } catch {
+                    return value;
+                }
+            }
         },
         {
             title: "Mô tả",
             dataIndex: "description",
-            key: "description"
+            key: "description",
+            width: 150,
         },
         {
             title: "Ngày tạo",
             dataIndex: "creationTime",
             key: "creationTime",
             align: "center",
+            width: 120,
             render: _value => DateUtil.toFormat(_value, 'DD/MM/YYYY')
         },
         {
@@ -50,11 +133,13 @@ export default function UserPage() {
             dataIndex: "modificationTime",
             key: "modificationTime",
             align: "center",
+            width: 150,
             render: _value => _value ? DateUtil.toFormat(_value, 'DD/MM/YYYY HH:mm') : "-"
         },
         {
             title: "Vai trò",
             key: "role",
+            width: 120,
             render: (_value: any, record: any) => <p>{record.roleId?.name}</p>
         },
     ];
@@ -80,6 +165,7 @@ export default function UserPage() {
               page={page}
               pageSize={pageSize}
               loading={loading}
+              scroll={{ x: 1800 }}
               breadcrumbs={[
                   {
                       href: '/page/user',
@@ -105,6 +191,8 @@ export default function UserPage() {
                 onOk={handleSubmit}
                 cancelText={"Đóng"}
                 okText={"Lưu"}
+                width={800}
+                style={{ top: 30 }}
                 onCancel={() => {
                     setModalOpen(false);
                     setEditRecord(null);
