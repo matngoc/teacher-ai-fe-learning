@@ -77,7 +77,7 @@ deploy-prod:
 	docker-compose -f docker-compose.prod.yml down || true
 	docker-compose -f docker-compose.prod.yml build --no-cache
 	docker-compose -f docker-compose.prod.yml up -d
-	@echo "✅ Production deployment complete! Access at http://localhost:8080"
+	@echo "✅ Production deployment complete! Access at http://localhost:5173"
 
 # Utility commands
 shell:

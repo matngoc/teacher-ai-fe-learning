@@ -246,7 +246,7 @@ restart: always
 | Environment | Port | URL |
 |-------------|------|-----|
 | Development | 3000 | http://localhost:3000 |
-| Production | 8080 | http://localhost:8080 |
+| Production | 5173 | http://localhost:5173 |
 
 Change ports in `docker-compose.yml` or `docker-compose.prod.yml`
 
