@@ -26,7 +26,7 @@ interface Props<T> {
   onPageSizeChange?: (pageSize: number) => void;
   onCreate?: () => void;
   onEdit?: (record: T) => void;
-  onDelete?: (id: string) => void;
+  onDelete?: (id: number) => void;
   actionColumns?: (record: T) => ActionPropItem[];
   extraSearchFields?: JSX.Element;
   extraHeaderButton?: JSX.Element;
