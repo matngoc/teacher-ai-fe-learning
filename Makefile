@@ -48,7 +48,7 @@ deploy:
 	docker-compose down || true
 	docker-compose build --no-cache
 	docker-compose up -d
-	@echo "✅ Deployment complete! Access at http://localhost:80"
+	@echo "✅ Deployment complete! Access at http://localhost:5173"
 
 # Production commands
 build-prod:

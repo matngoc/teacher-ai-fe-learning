@@ -15,7 +15,7 @@ if [ "$ENVIRONMENT" == "prod" ]; then
     echo "✅ Application started on http://localhost:8080"
 else
     docker-compose up -d
-    echo "✅ Application started on http://localhost:80"
+    echo "✅ Application started on http://localhost:5173"
 fi
 
 echo "📊 View logs with: docker-compose logs -f"

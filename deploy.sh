@@ -79,9 +79,9 @@ if docker ps | grep -q $CONTAINER_NAME; then
     print_message "✅ Container is running successfully!"
     print_message "Access the application at:"
     if [ "$ENVIRONMENT" == "prod" ]; then
-        print_message "  http://localhost:8080"
+        print_message "  http://localhost:5173"
     else
-        print_message "  http://localhost:80"
+        print_message "  http://localhost:5173"
     fi
 else
     print_error "❌ Container failed to start. Check logs with:"

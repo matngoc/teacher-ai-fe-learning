@@ -3,9 +3,12 @@ FROM node:23-alpine AS builder
 
 # Set working directory
 WORKDIR /app
+
+# Enable yarn
 RUN corepack enable
+
 # Copy package files
-COPY package*.json ./
+COPY package.json yarn.lock ./
 
 # Install dependencies
 RUN yarn install --frozen-lockfile
@@ -15,6 +18,7 @@ COPY . .
 
 # Build the application
 RUN yarn build
+
 # Production stage
 FROM nginx:alpine
 
@@ -24,8 +28,8 @@ COPY nginx.conf /etc/nginx/conf.d/default.conf
 # Copy built files from builder stage
 COPY --from=builder /app/dist /usr/share/nginx/html
 
-# Expose port 5173
-EXPOSE 5173
+# Expose port 80 (nginx default)
+EXPOSE 80
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
