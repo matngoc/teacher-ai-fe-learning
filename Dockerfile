@@ -3,19 +3,18 @@ FROM node:23-alpine AS builder
 
 # Set working directory
 WORKDIR /app
-
+RUN corepack enable
 # Copy package files
 COPY package*.json ./
 
 # Install dependencies
-RUN npm ci
+RUN yarn install --frozen-lockfile
 
 # Copy source code
 COPY . .
 
 # Build the application
-RUN npm run build
-
+RUN yarn build
 # Production stage
 FROM nginx:alpine
 
