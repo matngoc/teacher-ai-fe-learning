@@ -53,7 +53,6 @@ export default function RegisterPage() {
                         <h1 className="login-form-title">Đăng Ký Tài Khoản</h1>
                         <p className="login-form-subtitle">Tạo một tài khoản mới để bắt đầu</p>
                     </div>
-
                     <Form
                         form={registerForm}
                         layout="vertical"
