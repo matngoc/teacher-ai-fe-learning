@@ -29,8 +29,8 @@ export const createBaseCrudSlice = <T>(
     name: string;
     fetchPage: (params: PageRequestDto) => Promise<{ items: T[]; total: number }>;
     createItem: (data: Partial<T>) => Promise<CommonResultDto<any>>;
-    updateItem: (id: string, data: Partial<T>) => Promise<CommonResultDto<any>>;
-    deleteItem: (id: string) => Promise<CommonResultDto<any>>;
+    updateItem: (id: number, data: Partial<T>) => Promise<CommonResultDto<any>>;
+    deleteItem: (id: number) => Promise<CommonResultDto<any>>;
   }) => {
   const initialState: BaseState<T> = {
     list: [],
@@ -75,7 +75,7 @@ export const createBaseCrudSlice = <T>(
 
   const updateData = createAsyncThunk(
     `${name}/update`,
-    async ({ id, data }: { id: string; data: Partial<T> }, { dispatch, getState }: any) => {
+    async ({ id, data }: { id: number; data: Partial<T> }, { dispatch, getState }: any) => {
       try {
         const res = await updateItem(id, data);
 
@@ -96,7 +96,7 @@ export const createBaseCrudSlice = <T>(
 
   const deleteData = createAsyncThunk(
     `${name}/delete`,
-    async (id: string, { dispatch, getState }: any) => {
+    async (id: number, { dispatch, getState }: any) => {
       try {
         const res = await deleteItem(id);
 
