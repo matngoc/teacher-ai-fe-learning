@@ -1,7 +1,8 @@
 import { useCallback, useRef } from 'react';
+import type { BoardLayout, BoardTextSegment, BoardAction } from '~/pages/learner/types/board';
 
 interface MediaItem {
-  type: 'image' | 'transcript';
+  type: 'image' | 'transcript' | 'board';
   timestamp: number;
   // Image data
   imageUrl?: string;
@@ -9,6 +10,10 @@ interface MediaItem {
   servo?: string;
   // Transcript data
   transcript?: string;
+  // Board data
+  boardAction?: BoardAction;
+  boardLayout?: BoardLayout;
+  boardSegments?: BoardTextSegment[];
 }
 
 export const useMediaQueue = () => {
@@ -40,6 +45,16 @@ export const useMediaQueue = () => {
     queueMedia({
       type: 'transcript',
       transcript,
+    }, audioEndTime);
+  }, [queueMedia]);
+
+  // Queue board
+  const queueBoard = useCallback((action: BoardAction, audioEndTime: number, layout?: BoardLayout, segments?: BoardTextSegment[]) => {
+    queueMedia({
+      type: 'board',
+      boardAction: action,
+      boardLayout: layout,
+      boardSegments: segments,
     }, audioEndTime);
   }, [queueMedia]);
 
@@ -81,6 +96,7 @@ export const useMediaQueue = () => {
   return {
     queueImage,
     queueTranscript,
+    queueBoard,
     displayPendingMedia,
     clearQueue,
     getQueueSize,

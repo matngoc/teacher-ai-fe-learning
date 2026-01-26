@@ -1,4 +1,5 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
+import type { BoardState, BoardTextSegment, BoardLayout } from '~/pages/learner/types/board';
 
 export type AudioMode = 'stt' | 'direct' | 'text';
 export type ConnectionStatus = 'disconnected' | 'connecting' | 'connected' | 'listening';
@@ -58,6 +59,9 @@ export interface LearnerState {
     servo?: string;
   } | null;
   
+  // Board display
+  currentBoard: BoardState | null;
+  
   // Logs
   logs: Array<{
     message: string;
@@ -101,6 +105,7 @@ const initialState: LearnerState = {
   messages: [],
   transcript: '',
   currentImage: null,
+  currentBoard: null,
   logs: [],
   showAdvanced: false,
 };
@@ -196,6 +201,56 @@ const learnerSlice = createSlice({
     // Image actions
     setCurrentImage: (state, action: PayloadAction<{ url: string; mood?: string; servo?: string } | null>) => {
       state.currentImage = action.payload;
+    },
+    
+    // Board actions
+    initBoard: (state, action: PayloadAction<{ layout: BoardLayout }>) => {
+      // Always create fresh board with empty segments
+      state.currentBoard = {
+        layout: action.payload.layout,
+        segments: [],
+        isVisible: true,
+      };
+    },
+    addBoardText: (state, action: PayloadAction<BoardTextSegment[]>) => {
+      if (state.currentBoard) {
+        action.payload.forEach(segment => {
+          // Check if segment already exists, if so update it, otherwise add
+          const existingIndex = state.currentBoard!.segments.findIndex(s => s.id === segment.id);
+          if (existingIndex >= 0) {
+            state.currentBoard!.segments[existingIndex] = segment;
+          } else {
+            state.currentBoard!.segments.push(segment);
+          }
+        });
+      }
+    },
+    updateBoardText: (state, action: PayloadAction<BoardTextSegment[]>) => {
+      if (state.currentBoard) {
+        action.payload.forEach(segment => {
+          const existingIndex = state.currentBoard!.segments.findIndex(s => s.id === segment.id);
+          if (existingIndex >= 0) {
+            state.currentBoard!.segments[existingIndex] = { ...state.currentBoard!.segments[existingIndex], ...segment };
+          }
+        });
+      }
+    },
+    removeBoardText: (state, action: PayloadAction<number[]>) => {
+      if (state.currentBoard) {
+        state.currentBoard.segments = state.currentBoard.segments.filter(
+          segment => !action.payload.includes(segment.id)
+        );
+      }
+    },
+    clearBoard: (state) => {
+      if (state.currentBoard) {
+        // Clear segments but keep board visible
+        state.currentBoard.segments = [];
+      }
+    },
+    hideBoard: (state) => {
+      // Hide board completely
+      state.currentBoard = null;
     },
     
     // Log actions
