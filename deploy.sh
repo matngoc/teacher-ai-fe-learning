@@ -42,6 +42,28 @@ if ! command -v docker-compose &> /dev/null; then
     exit 1
 fi
 
+# Check if .env file exists
+if [ ! -f .env ]; then
+    print_warning ".env file not found!"
+    print_warning "Creating .env file from .env.example..."
+    if [ -f .env.example ]; then
+        cp .env.example .env
+        print_warning "Please edit .env file with your actual API URLs before deploying:"
+        print_warning "  VITE_API_URL=https://your-api-url.com"
+        print_warning "  VITE_AI_BE_URL=https://your-ai-api-url.com"
+        print_error "Deployment stopped. Edit .env file and run again."
+        exit 1
+    else
+        print_error "No .env.example file found. Please create .env manually."
+        exit 1
+    fi
+fi
+
+# Load environment variables
+export $(grep -v '^#' .env | xargs)
+print_message "Loaded environment variables from .env"
+print_message "VITE_API_URL: $VITE_API_URL"
+
 # Stop existing containers
 print_message "Stopping existing containers..."
 if [ "$ENVIRONMENT" == "prod" ]; then

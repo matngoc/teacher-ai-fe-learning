@@ -9,14 +9,22 @@ Hướng dẫn nhanh để deploy Teacher AI Frontend bằng Docker trên Ubuntu
 git clone <repository-url>
 cd teacher-ai-fe-learning
 
-# 2. Cấp quyền cho scripts
+# 2. Tạo file .env với API URL
+cat > .env << 'EOF'
+VITE_API_URL=https://api.yourdomain.com
+VITE_AI_BE_URL=https://ai-api.yourdomain.com
+EOF
+
+# 3. Cấp quyền cho scripts
 chmod +x *.sh
 
-# 3. Deploy
+# 4. Deploy
 ./deploy.sh prod
 ```
 
-Truy cập: **http://your-server-ip:8080**
+**Lưu ý:** Thay `https://api.yourdomain.com` bằng URL API backend thực tế của bạn.
+
+Truy cập: **http://your-server-ip:5173**
 
 ---
 
