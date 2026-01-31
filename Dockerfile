@@ -18,9 +18,13 @@ COPY . .
 
 # Accept build arguments for API URLs
 ARG VITE_API_URL
+ARG VITE_AI_BE_URL
+ARG VITE_WS_BASE_URL
 
 # Set environment variables for build
 ENV VITE_API_URL=$VITE_API_URL
+ENV VITE_AI_BE_URL=$VITE_AI_BE_URL
+ENV VITE_WS_BASE_URL=$VITE_WS_BASE_URL
 
 # Build the application
 RUN yarn build

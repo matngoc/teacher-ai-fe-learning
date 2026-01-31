@@ -55,7 +55,7 @@ export default function LoginPage() {
             <div className="login-wrapper">
                 <div className="login-form">
                     <div className="login-form-header">
-                        <img className="logo-login" src="public/logo.png" alt="Logo" />
+                        <img className="logo-login" src="/logo.png" alt="Logo" />
                         <h1 className="login-form-title">Đăng Nhập</h1>
                         <p className="login-form-subtitle">Chào mừng bạn quay trở lại với Hana!</p>
                     </div>

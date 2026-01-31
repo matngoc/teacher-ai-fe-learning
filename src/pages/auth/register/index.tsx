@@ -49,7 +49,7 @@ export default function RegisterPage() {
             <div className="login-wrapper">
                 <div className="register-form">
                     <div className="login-form-header">
-                        <img className="logo-login" src="public/logo.png" alt="Logo" />
+                        <img className="logo-login" src="/logo.png" alt="Logo" />
                         <h1 className="login-form-title">Đăng Ký Tài Khoản</h1>
                         <p className="login-form-subtitle">Tạo một tài khoản mới để bắt đầu</p>
                     </div>
