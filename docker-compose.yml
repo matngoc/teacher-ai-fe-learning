@@ -7,6 +7,8 @@ services:
       dockerfile: Dockerfile
       args:
         VITE_API_URL: ${VITE_API_URL}
+        VITE_AI_BE_URL: ${VITE_AI_BE_URL}
+        VITE_WS_BASE_URL: ${VITE_WS_BASE_URL}
     container_name: teacher-ai-fe-learning
     restart: unless-stopped
     ports:
