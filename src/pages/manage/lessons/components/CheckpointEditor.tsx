@@ -145,6 +145,10 @@ export function CheckpointEditor({ initialCheckpoints = [], onSave }: Checkpoint
                       <div className="w-4 h-4 rounded border-2" style={{ borderColor: "rgb(234, 179, 8)" }}></div>
                       <span className="text-sm">Viền vàng: Checkpoint Narrative</span>
                     </div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-4 h-4 rounded border-2" style={{ borderColor: "rgb(147, 51, 234)" }}></div>
+                      <span className="text-sm">Viền tím: Checkpoint CTA Pronunciation</span>
+                    </div>
                   </div>
                 }
               >
@@ -231,13 +235,19 @@ function SortableCheckpointCard({
       checkpoint.type === "narrative" ? "hsl(var(--narrative))" : "hsl(var(--cta))",
   };
 
+  const getBorderColor = () => {
+    if (checkpoint.type === 'narrative') return 'rgb(234, 179, 8)';
+    if (checkpoint.type === 'cta-pronun') return 'rgb(147, 51, 234)';
+    return 'rgb(59, 130, 246)';
+  };
+
   return (
     <Card
       ref={setNodeRef}
       style={style}
       className="overflow-hidden transition-all"
       variant="borderless"
-      styles={{ body: { padding: 0, borderLeft: `8px solid ${checkpoint.type === 'narrative' ? 'rgb(234, 179, 8)' : 'rgb(59, 130, 246)'}` } }}
+      styles={{ body: { padding: 0, borderLeft: `8px solid ${getBorderColor()}` } }}
     >
       <div 
         className="flex items-center justify-between p-4 cursor-pointer hover:bg-gray-50 border-b border-gray-200"
@@ -256,8 +266,14 @@ function SortableCheckpointCard({
           <span className="font-medium">{checkpoint.name}</span>
         </div>
         <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
-          <span className={`px-3 py-1 rounded text-xs font-medium ${checkpoint.type === 'narrative' ? 'bg-yellow-100 text-yellow-800' : 'bg-blue-100 text-blue-800'}`}>
-            {checkpoint.type === 'narrative' ? 'Narrative' : 'CTA'}
+          <span className={`px-3 py-1 rounded text-xs font-medium ${
+            checkpoint.type === 'narrative' 
+              ? 'bg-yellow-100 text-yellow-800' 
+              : checkpoint.type === 'cta-pronun'
+              ? 'bg-purple-100 text-purple-800'
+              : 'bg-blue-100 text-blue-800'
+          }`}>
+            {checkpoint.type === 'narrative' ? 'Narrative' : checkpoint.type === 'cta-pronun' ? 'CTA-PRONOUN' : 'CTA'}
           </span>
           <Button
             type="text"

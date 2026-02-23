@@ -77,7 +77,10 @@ export default function LessonFormPage() {
 
       if (response.status === 0) {
         toast.success(isEditMode ? 'Cập nhật bài học thành công!' : 'Tạo bài học mới thành công!');
-        navigate('/manage/lessons');
+        if (!isEditMode) {
+          // Chỉ chuyển trang khi tạo mới, khi update thì ở lại để tiếp tục chỉnh sửa
+          navigate('/manage/lessons');
+        }
       } else {
         toast.error(response.msg || (isEditMode ? 'Cập nhật không thành công' : 'Tạo bài học không thành công'));
       }

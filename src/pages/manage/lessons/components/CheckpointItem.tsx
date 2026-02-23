@@ -3,6 +3,7 @@ import type { Checkpoint } from "../types/checkpoint";
 import { Input } from "antd";
 import { MediaSection } from "./MediaSection";
 import { TagInsertButtons } from "./TagInsertButtons";
+import { SegmentEditor } from "./SegmentEditor";
 
 const { TextArea } = Input;
 
@@ -49,11 +50,12 @@ export function CheckpointItem({ checkpoint, onChange }: CheckpointItemProps) {
           <label className="block text-sm font-medium mb-1">Type</label>
           <select
             value={checkpoint.type}
-            onChange={(e) => onChange({ ...checkpoint, type: e.target.value as "narrative" | "cta" })}
+            onChange={(e) => onChange({ ...checkpoint, type: e.target.value as "narrative" | "cta" | "cta-pronun" })}
             className="w-full h-10 px-3 rounded border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
           >
             <option value="narrative">Narrative</option>
             <option value="cta">CTA</option>
+            <option value="cta-pronun">CTA Pronunciation</option>
           </select>
         </div>
       </div>
@@ -158,6 +160,21 @@ export function CheckpointItem({ checkpoint, onChange }: CheckpointItemProps) {
             )}
           </div>
         </>
+      )}
+
+      {checkpoint.type === "cta-pronun" && (
+        <SegmentEditor
+          segments={checkpoint.other_data?.segment_list || []}
+          onUpdate={(segments) => {
+            onChange({
+              ...checkpoint,
+              other_data: {
+                ...checkpoint.other_data,
+                segment_list: segments,
+              },
+            });
+          }}
+        />
       )}
     </div>
   );
