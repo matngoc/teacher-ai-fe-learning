@@ -136,6 +136,12 @@ export const VoiceChatContainer: React.FC<VoiceChatContainerProps> = ({
               message: '✅ Displayed queued board clear', 
               type: 'info' 
             }));
+          } else if (item.boardAction === 'close') {
+            dispatch(learnerActions.closeBoard());
+            dispatch(learnerActions.addLog({ 
+              message: '✅ Displayed queued board close (hidden)', 
+              type: 'info' 
+            }));
           }
         }
       });
@@ -512,6 +518,15 @@ export const VoiceChatContainer: React.FC<VoiceChatContainerProps> = ({
       } else {
         dispatch(learnerActions.clearBoard());
         dispatch(learnerActions.addLog({ message: '📋 Board cleared', type: 'info' }));
+      }
+    } else if (action === 'close') {
+      if (isAudioPlaying && currentEndTime > currentTime) {
+        console.log('📥 [QUEUE BOARD CLOSE]', { endTime: currentEndTime });
+        mediaQueue.queueBoard('close', currentEndTime);
+        dispatch(learnerActions.addLog({ message: '📥 Queued board close', type: 'info' }));
+      } else {
+        dispatch(learnerActions.closeBoard());
+        dispatch(learnerActions.addLog({ message: '📋 Board closed (hidden)', type: 'info' }));
       }
     }
   }, [audioPlayer, mediaQueue, dispatch]);
