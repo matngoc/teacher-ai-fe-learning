@@ -249,8 +249,14 @@ const learnerSlice = createSlice({
       }
     },
     hideBoard: (state) => {
-      // Hide board completely
+      // Hide board completely (remove from state)
       state.currentBoard = null;
+    },
+    closeBoard: (state) => {
+      // Temporarily hide board but keep segments intact
+      if (state.currentBoard) {
+        state.currentBoard.isVisible = false;
+      }
     },
     
     // Log actions

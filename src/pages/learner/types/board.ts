@@ -1,6 +1,6 @@
 export type BoardLayout = 'normal' | 'auto_center';
 
-export type BoardAction = 'init' | 'add' | 'update' | 'remove' | 'clear';
+export type BoardAction = 'init' | 'add' | 'update' | 'remove' | 'clear' | 'close';
 
 export interface BoardTextSegment {
   id: number;
