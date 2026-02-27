@@ -20,5 +20,18 @@ export default defineConfig({
       '~': path.resolve(__dirname, './src'),
       '@': path.resolve(__dirname, './src')
     }
-  }
+  },
+  build: {
+    chunkSizeWarningLimit: 600,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'vendor-react': ['react', 'react-dom', 'react-router-dom'],
+          'vendor-redux': ['@reduxjs/toolkit', 'react-redux'],
+          'vendor-antd': ['antd', '@ant-design/icons'],
+          'vendor-axios': ['axios'],
+        },
+      },
+    },
+  },
 })

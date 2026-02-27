@@ -2,21 +2,18 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.tsx'
-import {serviceOptions} from "./api/services/index.defs.ts";
-import authInterceptor from "./core/interceptors/auth.interceptor.ts";
 import { Provider } from "react-redux";
-import {persistor, store} from "./stores";
-import {ToastContainer} from "react-toastify";
-import {PersistGate} from "redux-persist/integration/react";
+import { store } from './stores/store.ts';
+import { GoogleOAuthProvider } from '@react-oauth/google';
 
-serviceOptions.axios = authInterceptor;
+const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || '';
+
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
+    <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
       <Provider store={store}>
-          <PersistGate loading={null} persistor={persistor}>
-              <App />
-          </PersistGate>
+        <App />
       </Provider>
-      <ToastContainer />
-  </StrictMode>,
+    </GoogleOAuthProvider>
+  </StrictMode>
 )
