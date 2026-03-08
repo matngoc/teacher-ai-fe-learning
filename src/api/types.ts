@@ -210,6 +210,105 @@ export interface CourseFilterDto {
   size?: number;
 }
 
+// Lesson types
+export interface Lesson extends BaseEntity {
+  courseId: number
+  code: string
+  name: string
+  description?: string
+  taskChain?: string
+  generationParams?: string
+  providerName?: string
+  systemPrompt?: string
+  formatOutput?: string
+  isActive: boolean
+  isDeleted?: boolean
+  learningStatus?: string
+  progressPercent?: number
+  course?: {
+    id: number
+    name: string
+    code: string
+    description?: string
+    level?: string
+    imageUrl?: string
+    isActive: boolean
+  }
+}
+
+export interface CreateLessonDto {
+  courseId: number;
+  code: string;
+  name: string;
+  description?: string;
+  taskChain?: string;
+  generationParams?: string;
+  providerName?: string;
+  systemPrompt?: string;
+  formatOutput?: string;
+  isActive?: boolean;
+}
+
+export interface UpdateLessonDto {
+  courseId?: number;
+  name?: string;
+  description?: string;
+  taskChain?: string;
+  generationParams?: string;
+  providerName?: string;
+  systemPrompt?: string;
+  formatOutput?: string;
+  isActive?: boolean;
+}
+
+export interface LessonFilterDto {
+  keyword?: string;
+  courseId?: number;
+  isActive?: boolean;
+  page?: number;
+  size?: number;
+}
+
+// Lesson History types
+export type LessonHistoryStatus = 'in_progress' | 'completed' | 'paused';
+
+export interface LessonHistory extends BaseEntity {
+  lessonId: number;
+  userId: number;
+  startedAt?: string;
+  finishedAt?: string;
+  progressPercent: number;
+  status: LessonHistoryStatus;
+  note?: string;
+}
+
+export interface CreateLessonHistoryDto {
+  lessonId: number;
+  userId: number;
+  startedAt?: string;
+  finishedAt?: string;
+  progressPercent?: number;
+  status?: LessonHistoryStatus;
+  note?: string;
+}
+
+export interface UpdateLessonHistoryDto {
+  startedAt?: string;
+  finishedAt?: string;
+  progressPercent?: number;
+  status?: LessonHistoryStatus;
+  note?: string;
+}
+
+export interface LessonHistoryFilterDto {
+  page?: number;
+  size?: number;
+  keyword?: string;
+  lessonId?: number;
+  userId?: number;
+  status?: LessonHistoryStatus;
+}
+
 // Storage types
 export interface StorageFile extends BaseEntity {
   filename: string;

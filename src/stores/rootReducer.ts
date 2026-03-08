@@ -5,6 +5,8 @@ import rolesReducer from './rolesSlice';
 import permissionsReducer from './permissionsSlice';
 import dictionaryReducer from './dictionarySlice';
 import coursesReducer from './coursesSlice';
+import lessonsReducer from './lessonsSlice';
+import learnerReducer from './learnerSlice';
 
 const rootReducer = combineReducers({
   auth: authReducer,
@@ -13,6 +15,8 @@ const rootReducer = combineReducers({
   permissions: permissionsReducer,
   dictionary: dictionaryReducer,
   courses: coursesReducer,
+  lessons: lessonsReducer,
+  learner: learnerReducer
 });
 
 export type RootState = ReturnType<typeof rootReducer>;

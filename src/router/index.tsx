@@ -19,6 +19,10 @@ import NotFoundPage from '../pages/NotFoundPage';
 import RoleRedirect from './RoleRedirect';
 import CoursesListPage from '../pages/courses/CoursesListPage';
 import CoursesViewPage from '../pages/courses/CoursesViewPage';
+import LessonManagePage from '../pages/lessons/index';
+import LessonViewPage from '../pages/lessons/learner/LessonViewPage';
+import LearnerPage from '../pages/lessons/learner/index';
+import LessonFormPage from '../pages/lessons/LessonFormPage.tsx';
 
 const router = createBrowserRouter([
   // Public routes
@@ -63,6 +67,9 @@ const router = createBrowserRouter([
       { index: true, element: <Navigate to="/admin/dashboard" replace /> },
       { path: 'dashboard', element: <DashboardPage /> },
       { path: 'courses', element: <CoursesListPage /> },
+      { path: 'lessons', element: <LessonManagePage /> },
+      { path: 'lessons/new', element: <LessonFormPage /> },
+      { path: 'lessons/:lessonId', element: <LessonFormPage /> },
       { path: 'profile', element: <ProfilePage /> },
       { path: 'change-password', element: <ChangePasswordPage /> },
     ],
@@ -82,9 +89,23 @@ const router = createBrowserRouter([
       { index: true, element: <Navigate to="/user/dashboard" replace /> },
       { path: 'dashboard', element: <DashboardPage /> },
       { path: 'courses', element: <CoursesViewPage /> },
+      { path: 'courses/:courseId/lessons', element: <LessonViewPage /> },
+      { path: 'lessons', element: <LessonViewPage /> },
       { path: 'profile', element: <ProfilePage /> },
       { path: 'change-password', element: <ChangePasswordPage /> },
     ],
+  },
+
+  // Learner page (full-screen, outside layout)
+  {
+    path: '/learn/:id',
+    element: (
+      <PrivateRoute>
+        <RoleRoute allowedRoles={['USER']}>
+          <LearnerPage />
+        </RoleRoute>
+      </PrivateRoute>
+    ),
   },
 
   // Root redirect

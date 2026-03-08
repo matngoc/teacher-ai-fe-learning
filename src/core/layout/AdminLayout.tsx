@@ -11,6 +11,7 @@ import {
 import {
   DashboardOutlined,
   DatabaseOutlined,
+  FileTextOutlined,
   FolderOutlined,
   KeyOutlined,
   LogoutOutlined,
@@ -30,6 +31,7 @@ const { Text } = Typography;
 const menuItems: MenuProps['items'] = [
   { key: '/admin/dashboard', icon: <DashboardOutlined />, label: 'Dashboard' },
   { key: '/admin/courses', icon: <ReadOutlined />, label: 'Khóa học' },
+  { key: '/admin/lessons', icon: <FileTextOutlined />, label: 'Bài học' },
 ];
 
 const AdminLayout: React.FC = () => {

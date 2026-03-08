@@ -1,9 +1,10 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { Select, Tag, Card, Row, Col, Input, Typography, Pagination } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
-import { useAppDispatch, useAppSelector } from '../../stores/hooks';
-import { coursesActions } from '../../stores/coursesSlice';
-import type { Course } from '../../api/types';
+import { useNavigate } from 'react-router-dom';
+import { useAppDispatch, useAppSelector } from '~/stores/hooks.ts';
+import { coursesActions } from '~/stores/coursesSlice.ts';
+import type { Course } from '~/api/types.ts';
 
 const { Title, Paragraph } = Typography;
 const { Search } = Input;
@@ -27,6 +28,7 @@ const LEVEL_OPTIONS = [
 
 const CoursesViewPage: React.FC = () => {
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const { items, total, page, pageSize, loading } = useAppSelector((s) => s.courses);
   const [keyword, setKeyword] = useState('');
   const [levelFilter, setLevelFilter] = useState<string>('');
@@ -93,6 +95,8 @@ const CoursesViewPage: React.FC = () => {
             <Col key={course.id} xs={24} sm={12} md={8} lg={6}>
               <Card
                 hoverable
+                onClick={() => navigate(`/user/courses/${course.id}/lessons`)}
+                style={{ cursor: 'pointer' }}
                 cover={
                   course.imageUrl ? (
                     <img

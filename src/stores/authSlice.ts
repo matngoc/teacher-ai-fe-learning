@@ -50,6 +50,7 @@ export const googleLoginThunk = createAsyncThunk(
   'auth/googleLogin',
   async (googleAccessToken: string, { rejectWithValue }) => {
     try {
+      debugger
       const res = await authService.googleTokenLogin(googleAccessToken);
       const raw = res as unknown as Record<string, unknown>;
       const accessToken = (raw['accessToken'] ?? raw['access_token']) as string | undefined;
