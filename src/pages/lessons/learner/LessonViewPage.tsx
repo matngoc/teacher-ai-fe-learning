@@ -165,9 +165,9 @@ const LessonViewPage: React.FC = () => {
             return (
               <Card
                 key={lesson.id}
-                hoverable
-                onClick={() => handleCardClick(lesson)}
-                style={{ cursor: 'pointer' }}
+                hoverable={status !== 'done'}
+                onClick={() => status !== 'done' && handleCardClick(lesson)}
+                style={{ cursor: status === 'done' ? 'not-allowed' : 'pointer', opacity: status === 'done' ? 0.7 : 1 }}
                 styles={{ body: { padding: '16px 20px' } }}
               >
                 <div className='flex items-center gap-4'>

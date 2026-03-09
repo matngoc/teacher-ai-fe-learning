@@ -183,6 +183,7 @@ export interface Course extends BaseEntity {
   imageUrl?: string;
   isActive: boolean;
   isDeleted?: boolean;
+  lessons?: Pick<Lesson, 'id' | 'name' | 'code' | 'learningStatus' | 'progressPercent'>[];
 }
 
 export interface CreateCourseDto {

@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { Select, Tag, Card, Row, Col, Input, Typography, Pagination } from 'antd';
-import { SearchOutlined } from '@ant-design/icons';
+import { Select, Tag, Card, Row, Col, Input, Typography, Pagination, Button } from 'antd';
+import { PlayCircleOutlined, SearchOutlined, ThunderboltOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '~/stores/hooks.ts';
 import { coursesActions } from '~/stores/coursesSlice.ts';
@@ -66,7 +66,7 @@ const CoursesViewPage: React.FC = () => {
     <div>
       <div className="mb-6">
         <Title level={3} className="!mb-1">Khóa học</Title>
-        <Paragraph type="secondary">Danh sách các khóa học đang có sẵn</Paragraph>
+        <Paragraph type="secondary">Danh sách các khóa học</Paragraph>
       </div>
 
       <div className="flex gap-3 mb-6 flex-wrap">
@@ -142,6 +142,68 @@ const CoursesViewPage: React.FC = () => {
                     {course.description}
                   </Paragraph>
                 )}
+                {(() => {
+                  const lessons = course.lessons ?? [];
+                  const totalLessons = lessons.length;
+                  const completedCount = lessons.filter((l) => l.learningStatus === 'completed').length;
+                  const inProgressLesson = lessons.find((l) => l.learningStatus === 'in_progress');
+                  const notStartedLessons = lessons.filter((l) => !l.learningStatus || l.learningStatus === 'not_started');
+
+                  const handleContinue = (e: React.MouseEvent) => {
+                    e.stopPropagation();
+                    if (inProgressLesson) navigate(`/learn/${inProgressLesson.id}`);
+                  };
+
+                  const handleRandom = (e: React.MouseEvent) => {
+                    e.stopPropagation();
+                    if (notStartedLessons.length > 0) {
+                      const random = notStartedLessons[Math.floor(Math.random() * notStartedLessons.length)];
+                      navigate(`/learn/${random.id}`);
+                    }
+                  };
+
+                  return totalLessons > 0 ? (
+                    <div className="mt-2 pt-2 border-t border-gray-100 flex flex-col gap-1">
+                      <div className="flex items-center justify-between text-xs text-gray-500">
+                        <span>📖 Tổng số bài:</span>
+                        <Tag color="blue" className="!m-0 text-xs">{totalLessons} bài</Tag>
+                      </div>
+                      <div className="flex items-center justify-between text-xs text-gray-500">
+                        <span>✅ Đã hoàn thành:</span>
+                        <Tag color="green" className="!m-0 text-xs">{completedCount} bài</Tag>
+                      </div>
+                      {inProgressLesson && (
+                        <div className="flex items-center justify-between text-xs text-gray-500">
+                          <span>🔄 Đang học:</span>
+                          <Tag color="orange" className="!m-0 text-xs" style={{ maxWidth: 110, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                            {inProgressLesson.name}
+                          </Tag>
+                        </div>
+                      )}
+                      <div className="flex gap-2 mt-2">
+                        <Button
+                          size="small"
+                          type="primary"
+                          icon={<PlayCircleOutlined />}
+                          disabled={!inProgressLesson}
+                          onClick={handleContinue}
+                          style={{ flex: 1, fontSize: 12 }}
+                        >
+                          Học tiếp
+                        </Button>
+                        <Button
+                          size="small"
+                          icon={<ThunderboltOutlined />}
+                          disabled={notStartedLessons.length === 0}
+                          onClick={handleRandom}
+                          style={{ flex: 1, fontSize: 12 }}
+                        >
+                          Bài bất kỳ
+                        </Button>
+                      </div>
+                    </div>
+                  ) : null;
+                })()}
               </Card>
             </Col>
           ))}
