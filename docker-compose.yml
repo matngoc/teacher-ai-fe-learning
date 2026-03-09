@@ -9,6 +9,7 @@ services:
         VITE_API_URL: ${VITE_API_URL}
         VITE_AI_BE_URL: ${VITE_AI_BE_URL}
         VITE_WS_BASE_URL: ${VITE_WS_BASE_URL}
+        GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
     container_name: teacher-ai-fe-learning
     restart: unless-stopped
     ports:
