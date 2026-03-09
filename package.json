@@ -14,12 +14,15 @@
     "gen-api": "node ./src/gen-api.js"
   },
   "dependencies": {
+    "@ant-design/icons": "^6.1.0",
     "@dnd-kit/core": "^6.3.1",
     "@dnd-kit/sortable": "^10.0.0",
     "@dnd-kit/utilities": "^3.2.2",
+    "@react-oauth/google": "^0.13.4",
     "@reduxjs/toolkit": "^2.9.0",
     "@tailwindcss/vite": "^4.1.14",
     "antd": "^5.27.4",
+    "axios": "^1.13.5",
     "date-fns": "^4.1.0",
     "lucide-react": "^0.562.0",
     "qs": "^6.14.0",

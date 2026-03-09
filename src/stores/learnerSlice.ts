@@ -1,5 +1,5 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
-import type { BoardState, BoardTextSegment, BoardLayout } from '~/pages/learner/types/board';
+import { BoardLayout, BoardState, BoardTextSegment } from '~/pages/lessons/learner/types/board.ts'
 
 export type AudioMode = 'stt' | 'direct' | 'text';
 export type ConnectionStatus = 'disconnected' | 'connecting' | 'connected' | 'listening';
@@ -110,7 +110,7 @@ const initialState: LearnerState = {
   showAdvanced: false,
 };
 
-const learnerSlice = createSlice({
+const learnerBaseSlice = createSlice({
   name: 'learner',
   initialState,
   reducers: {
@@ -285,5 +285,6 @@ const learnerSlice = createSlice({
   },
 });
 
-export const learnerActions = learnerSlice.actions;
+export const learnerSlice = learnerBaseSlice
+export const learnerActions = learnerBaseSlice.actions
 export default learnerSlice.reducer;
