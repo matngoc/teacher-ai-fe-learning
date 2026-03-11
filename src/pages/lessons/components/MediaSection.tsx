@@ -81,7 +81,7 @@ export function MediaSection({
         <label className="text-base font-medium">{title}</label>
       </div>
       <div className="grid grid-cols-[repeat(auto-fill,minmax(100px,1fr))] gap-3">
-        {mediaList.map((media, index) => (
+        {mediaList?.map((media, index) => (
           <MediaCard
             key={index}
             media={media}
@@ -105,7 +105,7 @@ export function MediaSection({
         media={editingIndex !== null ? mediaList[editingIndex] : undefined}
         mediaType={mediaType}
         onSave={handleSave}
-        existingIds={allMediaInCheckpoint.map((m) => m.id)}
+        existingIds={allMediaInCheckpoint?.map((m) => m.id)}
       />
 
       <Modal

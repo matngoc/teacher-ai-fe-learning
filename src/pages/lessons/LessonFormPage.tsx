@@ -11,14 +11,14 @@ import {
 } from 'antd';
 import { ArrowLeftOutlined, SaveOutlined } from '@ant-design/icons';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useAppDispatch, useAppSelector } from '../../stores/hooks';
-import { lessonsActions } from '../../stores/lessonsSlice';
-import { lessonService } from '../../api/services/lessonService';
-import { courseService } from '../../api/services/courseService';
-import { useToastMessages } from '../../core/hooks/useToastMessages';
+import { useAppDispatch, useAppSelector } from '~/stores/hooks.ts';
+import { lessonsActions } from '~/stores/lessonsSlice.ts';
+import { lessonService } from '~/api/services/lessonService.ts';
+import { courseService } from '~/api/services/courseService.ts';
+import { useToastMessages } from '~/core/hooks/useToastMessages.ts';
 import { CheckpointEditor } from './components/CheckpointEditor';
 import type { Checkpoint } from './types/checkpoint';
-import type { Course, CreateLessonDto, UpdateLessonDto } from '../../api/types';
+import type { Course, CreateLessonDto, UpdateLessonDto } from '~/api/types.ts';
 
 const { TextArea } = Input;
 const { Title } = Typography;
@@ -83,14 +83,10 @@ export default function LessonFormPage() {
           // Parse taskChain JSON string -> checkpoints array
           if (lesson.taskChain) {
             try {
-              const parsed = JSON.parse(lesson.taskChain);
-              // Support both array of checkpoints or { checkpoints: [...] }
-              if (Array.isArray(parsed)) {
-                setCheckpoints(parsed);
-              } else if (parsed?.checkpoints) {
-                setCheckpoints(parsed.checkpoints);
-              } else if (parsed?.[0]?.checkpoints) {
-                setCheckpoints(parsed[0].checkpoints);
+              const parsed = JSON.parse(lesson.taskChain)
+              const taskChain = parsed?.[0]
+              if (taskChain?.checkpoints) {
+                setCheckpoints(taskChain.checkpoints);
               }
             } catch {
               // taskChain not valid JSON - ignore

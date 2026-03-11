@@ -32,8 +32,8 @@ export function CheckpointItem({ checkpoint, onChange }: CheckpointItemProps) {
     onChange({ ...checkpoint, response_guide: newResponse });
   };
 
-  const questionMedia = checkpoint.media_list.filter((m) => m.type === "for_question");
-  const responseMedia = checkpoint.media_list.filter((m) => m.type === "for_response");
+  const questionMedia = checkpoint.media_list?.filter((m) => m.type === "for_question");
+  const responseMedia = checkpoint.media_list?.filter((m) => m.type === "for_response");
 
   return (
     <div className="p-6 space-y-6">

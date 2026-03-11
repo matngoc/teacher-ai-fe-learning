@@ -58,7 +58,7 @@ export function TagInsertButtons({
 
   const emotionMenu = (
     <Menu>
-      {emotions.map((emotion) => (
+      {emotions?.map((emotion) => (
         <Menu.Item
           key={emotion.combo_name}
           onClick={() => onInsertEmotion(emotion.combo_name)}
@@ -71,7 +71,7 @@ export function TagInsertButtons({
 
   return (
     <div className="flex flex-wrap gap-2 mt-2">
-      {mediaList.map((media) => {
+      {mediaList?.map((media) => {
         const MediaIcon = getMediaIcon(media);
         const tooltipTitle = isActive ? undefined : "Click on the text box first to insert tags";
         
