@@ -56,16 +56,16 @@ const ProfilePage: React.FC = () => {
 
   const openEdit = () => {
     form.setFieldsValue({
-      firstName: user?.firstName,
-      lastName: user?.lastName,
-      email: user?.email,
-      age: user?.age,
-      job: user?.job,
-      avatarUrl: user?.avatarUrl,
-      motivation: user?.motivation,
-      englishLevel: user?.englishLevel,
-      favouriteTopic: user?.favouriteTopic,
-    });
+      firstName: user?.profile?.firstName,
+      lastName: user?.profile?.lastName,
+      email: user?.profile?.email,
+      age: user?.profile?.age,
+      job: user?.profile?.job,
+      avatarUrl: user?.profile?.avatarUrl,
+      motivation: user?.profile?.motivation,
+      englishLevel: user?.profile?.englishLevel,
+      favouriteTopic: user?.profile?.favouriteTopic
+    })
     setEditOpen(true);
   };
 
@@ -86,54 +86,58 @@ const ProfilePage: React.FC = () => {
   return (
     <div>
       <BasePageHeader
-        title="Hồ sơ cá nhân"
+        title='Hồ sơ cá nhân'
         extra={
-          <Button type="primary" icon={<EditOutlined />} onClick={openEdit}>
+          <Button type='primary' icon={<EditOutlined />} onClick={openEdit}>
             Chỉnh sửa
           </Button>
         }
       />
 
       <Card>
-        <div className="flex items-center gap-6 mb-6">
-          <Avatar size={80} src={user.avatarUrl} icon={<UserOutlined />} className="bg-blue-500" />
+        <div className='flex items-center gap-6 mb-6'>
+          <Avatar size={80} src={user?.profile?.avatarUrl} icon={<UserOutlined />} className='bg-blue-500' />
           <div>
-            <div className="text-xl font-semibold">
-              {user.firstName} {user.lastName}
+            <div className='text-xl font-semibold'>
+              {user?.profile?.firstName} {user.profile?.lastName}
             </div>
-            <div className="text-gray-500">@{user.username}</div>
-            <Tag color={statusColor[user.status] || 'default'} className="mt-1">
+            <div className='text-gray-500'>@{user.username}</div>
+            <Tag color={statusColor[user.status] || 'default'} className='mt-1'>
               {user.status}
             </Tag>
           </div>
         </div>
 
         <Descriptions bordered column={2}>
-          <Descriptions.Item label="Tên đăng nhập">{user.username}</Descriptions.Item>
-          <Descriptions.Item label="Email">{user.email || '—'}</Descriptions.Item>
-          <Descriptions.Item label="Họ">{user.firstName || '—'}</Descriptions.Item>
-          <Descriptions.Item label="Tên">{user.lastName || '—'}</Descriptions.Item>
-          <Descriptions.Item label="Tuổi">{user.age ?? '—'}</Descriptions.Item>
-          <Descriptions.Item label="Nghề nghiệp">{user.job || '—'}</Descriptions.Item>
-          <Descriptions.Item label="Trạng thái">
+          <Descriptions.Item label='Tên đăng nhập'>{user.username}</Descriptions.Item>
+          <Descriptions.Item label='Email'>{user?.profile?.email || '—'}</Descriptions.Item>
+          <Descriptions.Item label='Họ'>{user?.profile?.firstName || '—'}</Descriptions.Item>
+          <Descriptions.Item label='Tên'>{user?.profile?.lastName || '—'}</Descriptions.Item>
+          <Descriptions.Item label='Tuổi'>{user?.profile?.age ?? '—'}</Descriptions.Item>
+          <Descriptions.Item label='Nghề nghiệp'>{user?.profile?.job || '—'}</Descriptions.Item>
+          <Descriptions.Item label='Trạng thái'>
             <Tag color={statusColor[user.status]}>{user.status}</Tag>
           </Descriptions.Item>
-          <Descriptions.Item label="Roles">
+          <Descriptions.Item label='Roles'>
             {user.roles?.map((r) => (
-              <Tag key={r.id} color="blue">
+              <Tag key={r.id} color='blue'>
                 {r.name}
               </Tag>
             )) || '—'}
           </Descriptions.Item>
-          <Descriptions.Item label="Động lực học">
-            {motivationOptions.find((o) => o.value === user.motivation)?.key || user.motivation || '—'}
+          <Descriptions.Item label='Động lực học'>
+            {motivationOptions.find((o) => o.value === user.profile?.motivation)?.key ||
+              user?.profile?.motivation ||
+              '—'}
           </Descriptions.Item>
-          <Descriptions.Item label="Trình độ tiếng Anh">
-            {englishLevelOptions.find((o) => o.value === user.englishLevel)?.key || user.englishLevel || '—'}
+          <Descriptions.Item label='Trình độ tiếng Anh'>
+            {englishLevelOptions.find((o) => o.value === user?.profile?.englishLevel)?.key ||
+              user?.profile?.englishLevel ||
+              '—'}
           </Descriptions.Item>
-          <Descriptions.Item label="Chủ đề yêu thích">
-            {favouriteTopicOptions.find((o) => o.value === user.favouriteTopic)?.key ||
-              user.favouriteTopic ||
+          <Descriptions.Item label='Chủ đề yêu thích'>
+            {favouriteTopicOptions.find((o) => o.value === user?.profile?.favouriteTopic)?.key ||
+              user?.profile?.favouriteTopic ||
               '—'}
           </Descriptions.Item>
         </Descriptions>
@@ -141,82 +145,78 @@ const ProfilePage: React.FC = () => {
 
       {/* Edit Modal */}
       <Modal
-        title="Cập nhật hồ sơ"
+        title='Cập nhật hồ sơ'
         open={editOpen}
         onCancel={() => setEditOpen(false)}
         onOk={handleSave}
-        okText="Lưu"
-        cancelText="Hủy"
+        okText='Lưu'
+        cancelText='Hủy'
         confirmLoading={loading}
         width={640}
         destroyOnClose
       >
-        <Form form={form} layout="vertical" className="mt-4">
+        <Form form={form} layout='vertical' className='mt-4'>
           <Row gutter={16}>
             <Col span={12}>
-              <Form.Item label="Họ" name="firstName">
-                <Input placeholder="Nhập họ" />
+              <Form.Item label='Họ' name='firstName'>
+                <Input placeholder='Nhập họ' />
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item label="Tên" name="lastName">
-                <Input placeholder="Nhập tên" />
+              <Form.Item label='Tên' name='lastName'>
+                <Input placeholder='Nhập tên' />
               </Form.Item>
             </Col>
           </Row>
 
-          <Form.Item
-            label="Email"
-            name="email"
-            rules={[{ type: 'email', message: 'Email không hợp lệ' }]}
-          >
-            <Input placeholder="Nhập email" />
+          <Form.Item label='Email' name='email' rules={[{ type: 'email', message: 'Email không hợp lệ' }]}>
+            <Input placeholder='Nhập email' />
           </Form.Item>
 
           <Row gutter={16}>
             <Col span={12}>
-              <Form.Item label="Tuổi" name="age">
-                <InputNumber min={1} max={120} placeholder="Nhập tuổi" style={{ width: '100%' }} />
+              <Form.Item label='Tuổi' name='age'>
+                <InputNumber min={1} max={120} placeholder='Nhập tuổi' style={{ width: '100%' }} />
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item label="Nghề nghiệp" name="job">
-                <Input placeholder="Nhập nghề nghiệp" />
+              <Form.Item label='Nghề nghiệp' name='job'>
+                <Input placeholder='Nhập nghề nghiệp' />
               </Form.Item>
             </Col>
           </Row>
 
-          <Form.Item label="Avatar URL" name="avatarUrl">
-            <Input placeholder="https://example.com/avatar.jpg" />
+          <Form.Item label='Avatar URL' name='avatarUrl'>
+            <Input placeholder='https://example.com/avatar.jpg' />
           </Form.Item>
 
-          <Form.Item label="Động lực học" name="motivation">
+          <Form.Item label='Động lực học' name='motivation'>
             <Select
               allowClear
-              placeholder="Chọn động lực"
+              placeholder='Chọn động lực'
               options={motivationOptions.map((o) => ({ label: o.key, value: o.value }))}
             />
           </Form.Item>
 
-          <Form.Item label="Trình độ tiếng Anh" name="englishLevel">
+          <Form.Item label='Trình độ tiếng Anh' name='englishLevel'>
             <Select
               allowClear
-              placeholder="Chọn trình độ"
+              placeholder='Chọn trình độ'
               options={englishLevelOptions.map((o) => ({ label: o.key, value: o.value }))}
             />
           </Form.Item>
 
-          <Form.Item label="Chủ đề yêu thích" name="favouriteTopic">
+          <Form.Item label='Chủ đề yêu thích' name='favouriteTopic'>
             <Select
               allowClear
-              placeholder="Chọn chủ đề"
+              placeholder='Chọn chủ đề'
               options={favouriteTopicOptions.map((o) => ({ label: o.key, value: o.value }))}
             />
           </Form.Item>
         </Form>
       </Modal>
     </div>
-  );
+  )
 };
 
 export default ProfilePage;
