@@ -11,13 +11,16 @@ const { Panel } = Collapse;
 export const ConfigPanel: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { config, todos, showAdvanced } = useSelector((state: RootState) => state.learner);
+  const currentUser = useSelector((state: RootState) => state.auth.user);
 
   useEffect(() => {
-    // Set default user ID if empty
-    if (!config.userId) {
-      dispatch(learnerActions.updateConfig({ userId: 'string' }));
+    // Always sync learner config with authenticated user when available.
+    if (currentUser?.id && config.userId !== currentUser.id) {
+      dispatch(learnerActions.updateConfig({ userId: currentUser.id }));
     }
+  }, [dispatch, currentUser?.id, config.userId]);
 
+  useEffect(() => {
     // Fetch todo list on mount
     const fetchTodos = async () => {
       try {
@@ -159,7 +162,10 @@ export const ConfigPanel: React.FC = () => {
                 </label>
                 <Input
                   value={config.userId}
-                  onChange={(e) => dispatch(learnerActions.updateConfig({ userId: e.target.value }))}
+                  onChange={(e) => {
+                    const parsedUserId = Number(e.target.value);
+                    dispatch(learnerActions.updateConfig({ userId: Number.isNaN(parsedUserId) ? 0 : parsedUserId }));
+                  }}
                   placeholder="Enter user ID"
                   className="font-mono"
                 />

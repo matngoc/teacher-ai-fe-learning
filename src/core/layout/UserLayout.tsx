@@ -5,8 +5,7 @@ import AppLayoutShell from './AppLayoutShell';
 
 const menuItems: MenuProps['items'] = [
   { key: '/user/dashboard', icon: <DashboardOutlined />, label: 'Dashboard' },
-  { key: '/user/courses', icon: <ReadOutlined />, label: 'Khóa học' },
-  { key: '/user/lessons', icon: <BookOutlined />, label: 'Bài học' },
+  { key: '/user/courses', icon: <ReadOutlined />, label: 'Khóa học' }
 ];
 
 const UserLayout: React.FC = () => {

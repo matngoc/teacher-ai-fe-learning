@@ -30,16 +30,17 @@ export const VoiceChatContainer: React.FC<VoiceChatContainerProps> = ({
   compactLayout = false,
 }) => {
   const dispatch = useDispatch<AppDispatch>();
-  const { config, moods, connectionStatus } = useSelector((state: RootState) => state.learner);
+  const { config, moods, connectionStatus } = useSelector((state: RootState) => state.learner)
+  const currentUser = useSelector((state: RootState) => state.auth.user)
   
   const [conversationId, setConversationId] = useState<string>('');
   const [hasConnectionError, setHasConnectionError] = useState(false);
   const turnCompleteRef = useRef(false);
   const lastAudioEndTimeRef = useRef(0);
   const autoReopenTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const lastMessageFinishedRef = useRef(true); // Track if last message was finished
-  const isHoldModeRef = useRef(false); // Track if in hold-to-talk mode
-  const mouseDownTimeRef = useRef(0); // Track mouse down time to distinguish click vs hold
+  const lastMessageFinishedRef = useRef(true);
+  const isHoldModeRef = useRef(false);
+  const mouseDownTimeRef = useRef(0);
 
   // Custom hooks
   const { isConnected, connect: wsConnect, disconnect: wsDisconnect, sendMessage, sendBinary, getIsConnected } = useWebSocket({
@@ -583,7 +584,7 @@ export const VoiceChatContainer: React.FC<VoiceChatContainerProps> = ({
     audioRecorder.startRecording();
     audioPlayer.toggleMute(true); // Mute incoming audio
     dispatch(learnerActions.setIsRecording(true));
-    turnCompleteRef.current = false;
+    turnCompleteRef.current = false
     
     // Send start_user_audio signal
     sendMessage({ type: 'start_user_audio' });
@@ -595,22 +596,25 @@ export const VoiceChatContainer: React.FC<VoiceChatContainerProps> = ({
       dispatch(learnerActions.setConnectionStatus('connecting'));
       dispatch(learnerActions.addLog({ message: 'Initializing conversation...', type: 'info' }));
 
+      const normalizedConversationId = String(conversationId ?? '').trim() || '0';
+
       // Initialize conversation
       const initResponse = botId 
         ? await LearnerService.initConversationWithBot({
-            user_id: config.userId || 'default_user',
+            user_id: currentUser?.id || 0,
             bot_id: botId,
-            conversation_id: conversationId || undefined,
+            conversation_id: normalizedConversationId,
           })
         : await LearnerService.initConversation({
             user_id: config.userId,
             todo_id: config.todoId,
-            conversation_id: conversationId || undefined,
+            conversation_id: normalizedConversationId,
           });
 
-      setConversationId(initResponse.conversation_id);
+      const resolvedConversationId = String(initResponse?.conversation_id ?? normalizedConversationId).trim() || '0';
+      setConversationId(resolvedConversationId);
       dispatch(learnerActions.addLog({ 
-        message: `Conversation initialized: ${initResponse.conversation_id}`, 
+        message: `Conversation initialized: ${resolvedConversationId}`,
         type: 'success' 
       }));
 
@@ -626,9 +630,9 @@ export const VoiceChatContainer: React.FC<VoiceChatContainerProps> = ({
       // Send init message
       sendMessage({
         type: 'init',
-        user_id: config.userId || 'default_user',
+        user_id: config.userId || 0,
         ...(botId ? { bot_id: botId } : { todo_id: config.todoId }),
-        conversation_id: initResponse.conversation_id,
+        conversation_id: resolvedConversationId,
       });
 
       toast.success('Connected successfully!');
@@ -639,7 +643,7 @@ export const VoiceChatContainer: React.FC<VoiceChatContainerProps> = ({
       toast.error(`Connection failed: ${error.message}`);
       setHasConnectionError(true); // Set error flag
     }
-  }, [config, conversationId, wsConnect, sendMessage, audioRecorder, audioPlayer, dispatch]);
+  }, [config, conversationId, botId, currentUser?.id, wsConnect, sendMessage, audioRecorder, audioPlayer, dispatch]);
 
   // Disconnect handler
   const handleDisconnect = useCallback(() => {

@@ -29,7 +29,7 @@ export interface MoodItem {
 
 export interface LearnerConfig {
   wsUrl: string;
-  userId: string;
+  userId: number;
   todoId: string;
   mode: AudioMode;
   asrType: string;
@@ -78,15 +78,15 @@ const getDefaultWebSocketUrl = (): string => {
   const baseUrl = import.meta.env.VITE_WS_BASE_URL;
   
   if (baseUrl) {
-    return `${baseUrl}/personalized-ai-coach/api/v1/bot/ws/audio2audio/string?asr_type=grpc`;
+    return `${baseUrl}/personalized-ai-coach/api/v1/bot/ws/audio2audio/0?asr_type=grpc`;
   }
   
   // Fallback to auto-detect from current page
   if (typeof window === 'undefined' || !window.location.host) return '';
   
   const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-  const host = window.location.host;
-  return `${protocol}//${host}/personalized-ai-coach/api/v1/bot/ws/audio2audio/string?asr_type=grpc`;
+  const host = window.location.host
+  return `${protocol}//${host}/personalized-ai-coach/api/v1/bot/ws/audio2audio/0?asr_type=grpc`;
 };
 
 const initialState: LearnerState = {
@@ -95,7 +95,7 @@ const initialState: LearnerState = {
   isHoldMode: false,
   config: {
     wsUrl: getDefaultWebSocketUrl(),
-    userId: 'default_user',
+    userId: 0,
     todoId: '',
     mode: 'direct',
     asrType: 'grpc',
@@ -138,19 +138,19 @@ const learnerBaseSlice = createSlice({
       if (baseUrl) {
         // Use environment variable
         if (action.payload === 'text') {
-          state.config.wsUrl = `${baseUrl}/personalized-ai-coach/api/v1/bot/ws/benchmark/string?benchmark_type=agent`;
+          state.config.wsUrl = `${baseUrl}/personalized-ai-coach/api/v1/bot/ws/benchmark/0?benchmark_type=agent`
         } else {
-          state.config.wsUrl = `${baseUrl}/personalized-ai-coach/api/v1/bot/ws/audio2audio/string?asr_type=${state.config.asrType}`;
+          state.config.wsUrl = `${baseUrl}/personalized-ai-coach/api/v1/bot/ws/audio2audio/0?asr_type=${state.config.asrType}`
         }
       } else {
         // Fallback to auto-detect from window.location
-        const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-        const host = window.location.host;
-        
+        const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:'
+        const host = window.location.host
+
         if (action.payload === 'text') {
-          state.config.wsUrl = `${protocol}//${host}/personalized-ai-coach/api/v1/bot/ws/benchmark/string?benchmark_type=agent`;
+          state.config.wsUrl = `${protocol}//${host}/personalized-ai-coach/api/v1/bot/ws/benchmark/0?benchmark_type=agent`
         } else {
-          state.config.wsUrl = `${protocol}//${host}/personalized-ai-coach/api/v1/bot/ws/audio2audio/string?asr_type=${state.config.asrType}`;
+          state.config.wsUrl = `${protocol}//${host}/personalized-ai-coach/api/v1/bot/ws/audio2audio/0?asr_type=${state.config.asrType}`
         }
       }
     },

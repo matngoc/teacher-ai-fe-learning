@@ -852,9 +852,9 @@
             const host = window.location.host;
             
             if (audioMode === 'text') {
-                return `${protocol}//${host}/personalized-ai-coach/api/v1/bot/ws/benchmark/string?benchmark_type=agent`;
+                return `${protocol}//${host}/personalized-ai-coach/api/v1/bot/ws/benchmark/0?benchmark_type=agent`;
             } else {
-                return `${protocol}//${host}/personalized-ai-coach/api/v1/bot/ws/audio2audio/string?asr_type=grpc`;
+                return `${protocol}//${host}/personalized-ai-coach/api/v1/bot/ws/audio2audio/0?asr_type=grpc`;
             }
         }
         
@@ -1025,7 +1025,7 @@
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
-                        conversation_id: conversationId,
+                        conversation_id: conversationId ?? '0',
                         user_id: userId,
                         todo_id: todoId
                     })
@@ -1809,7 +1809,7 @@
             // Extract conversation_id from WebSocket URL (last segment after /, before query params)
             // Remove query parameters first (everything after ?)
             const urlWithoutParams = wsUrl.split('?')[0];
-            const conversationId = urlWithoutParams.split('/').pop();
+            const conversationId = urlWithoutParams.split('/').pop() ?? "0";
             if (!conversationId) {
                 log('❌ Không thể lấy conversation_id từ WebSocket URL!', 'error');
                 alert('WebSocket URL không hợp lệ. Không tìm thấy conversation_id!');

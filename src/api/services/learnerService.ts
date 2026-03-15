@@ -13,13 +13,13 @@ export interface TodoResponse {
 }
 
 export interface ConversationInitRequest {
-  user_id: string;
-  todo_id: string;
-  conversation_id?: string;
+  user_id: number
+  todo_id: string
+  conversation_id?: string
 }
 
 export interface ConversationInitWithBotRequest {
-  user_id: string;
+  user_id: number;
   bot_id: number;
   conversation_id?: string;
 }
@@ -62,7 +62,7 @@ export const LearnerService = {
     const robotApiUrl = import.meta.env.VITE_AI_BE_URL;
     const payload = {
       ...data,
-      conversation_id: data.conversation_id ?? 'string',
+      conversation_id: data.conversation_id ?? '0',
     };
     const response = await axiosInstance.post<ConversationInitResponse>(`${robotApiUrl}/bot/initConversation`, payload)
     return response.data;
@@ -75,7 +75,7 @@ export const LearnerService = {
     const robotApiUrl = import.meta.env.VITE_AI_BE_URL;
     const payload = {
       ...params,
-      conversation_id: params.conversation_id ?? 'string',
+      conversation_id: params.conversation_id ?? '0',
     };
     const response = await axiosInstance.post<ConversationInitResponse>(`${robotApiUrl}/bot/initConversation`, payload)
     return response.data;
