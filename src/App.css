@@ -12,8 +12,8 @@
 :root {
   --background: #d0ccff;
   --foreground: #d0ccff;
-  --primary: #6155F5;
-  --primary-bold: #383286;
+  --primary: #7744b1;
+  --primary-bold: #6019af;
   --secondary: #FF7601;
   --tertiary: #ffa052;
   --extra: #E1EEBC;
@@ -26,8 +26,8 @@
   :root {
     --background: #d0ccff;
     --foreground: #d0ccff;
-    --primary: #6155F5;
-    --primary-bold: #383286;
+    --primary: #7744b1;
+    --primary-bold: #6019af;
     --secondary: #FF7601;
     --tertiary: #ffa052;
     --extra: #E1EEBC;
@@ -50,10 +50,10 @@ body {
 }
 
 .primary-text{
-  color: var(--primary);
+  color: var(--primary) !important;
 }
 .primary-bold-text{
-  color: var(--primary-bold);
+  color: var(--primary-bold) !important;
 }
 .primary-header-text{
   color: var(--primary-bold);

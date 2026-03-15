@@ -73,13 +73,12 @@ const UsersListPage: React.FC = () => {
   };
 
   const columns: TableColumnType<User>[] = [
-    { title: '#', dataIndex: 'id', key: 'id', width: 60 },
     { title: 'Username', dataIndex: 'username', key: 'username', render: (v) => <strong>{v}</strong> },
     { title: 'Email', dataIndex: 'email', key: 'email' },
     {
       title: 'Họ Tên',
       key: 'fullName',
-      render: (_, r) => `${r.firstName || ''} ${r.lastName || ''}`.trim() || '—',
+      render: (_, r) => `${r.profile?.firstName || ''} ${r.profile?.lastName || ''}`.trim() || '—',
     },
     {
       title: 'Trạng thái',

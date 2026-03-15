@@ -1,6 +1,5 @@
 // Common types used across the application
 
-/** Envelope chung của tất cả API response trước khi interceptor unwrap */
 export interface ApiEnvelope<T> {
   success: boolean;
   message: string;
@@ -8,7 +7,6 @@ export interface ApiEnvelope<T> {
   timestamp?: string;
 }
 
-/** Cấu trúc page response sau khi đã unwrap (res.data = phần data bên trong) */
 export interface PageData<T> {
   items: T[];
   total: number;
@@ -36,20 +34,22 @@ export interface BaseEntity {
   updatedAt?: string;
 }
 
-// Auth types
 export interface User extends BaseEntity {
   username: string;
-  email: string;
-  firstName?: string;
-  lastName?: string;
-  avatarUrl?: string;
   status: 'ACTIVE' | 'LOCKED' | 'DELETED';
   roles?: Role[];
-  motivation?: string;
-  englishLevel?: string;
-  favouriteTopic?: string;
-  age?: number;
-  job?: string;
+  profile?: UserProfile;
+}
+export interface UserProfile extends BaseEntity {
+  motivation?: string
+  englishLevel?: string
+  favouriteTopic?: string
+  age?: number
+  job?: string
+  email: string
+  firstName?: string
+  lastName?: string
+  avatarUrl?: string
 }
 
 export interface Role extends BaseEntity {

@@ -51,22 +51,15 @@ const RolesListPage: React.FC = () => {
   };
 
   const columns: TableColumnType<Role>[] = [
-    { title: '#', dataIndex: 'id', key: 'id', width: 60 },
     { title: 'Tên', dataIndex: 'name', key: 'name', render: (v) => <strong>{v}</strong> },
     { title: 'Mô tả', dataIndex: 'description', key: 'description', render: (v) => v || '—' },
     {
-      title: 'System',
+      title: 'Vai trò hệ thống',
       dataIndex: 'isSystem',
+      align: 'center',
       key: 'isSystem',
-      render: (v) => v ? <Tag color="red">System</Tag> : <Tag>Custom</Tag>,
-    },
-    {
-      title: 'Permissions',
-      key: 'permissions',
-      render: (_, r) => r.permissions?.length
-        ? r.permissions.map((p) => <Tag key={p.id} color="geekblue">{p.name}</Tag>)
-        : <Tag>Chưa có</Tag>,
-    },
+      render: (v) => v ? <Tag color="purple">Hệ thống</Tag> : <Tag>Tùy chỉnh</Tag>,
+    }
   ];
 
   return (

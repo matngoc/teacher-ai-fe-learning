@@ -83,9 +83,17 @@ function BaseTable<T extends { id: number }>({
     ),
   };
 
+  const sttColumn: TableColumnType<T> = {
+    title: 'STT',
+    key: '_stt',
+    width: 60,
+    align: 'center',
+    render: (_: unknown, __: T, index: number) => (currentPage - 1) * pageSize + index + 1,
+  };
+
   const finalColumns = hideActions
-    ? columns
-    : [...columns, actionColumn];
+    ? [sttColumn, ...columns]
+    : [sttColumn, ...columns, actionColumn];
 
   return (
     <Table<T>

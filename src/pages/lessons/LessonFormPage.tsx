@@ -163,7 +163,6 @@ export default function LessonFormPage() {
             onFinish={handleSubmit}
             autoComplete="off"
           >
-            {/* Row 1: Khóa học + Mã bài học */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4">
               <Form.Item
                 label="Khóa học"

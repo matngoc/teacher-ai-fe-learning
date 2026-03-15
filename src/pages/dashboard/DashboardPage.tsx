@@ -13,7 +13,7 @@ const DashboardPage: React.FC = () => {
     <div>
       <BaseBreadcrumb />
       <div className="mb-6">
-        <Title level={4}>Xin chào, {user?.firstName || user?.username}!</Title>
+        <Title level={4}>Xin chào, {user?.profile?.firstName || user?.username}!</Title>
         <Text type="secondary">Chào mừng bạn trở lại hệ thống quản trị HanaTalk.</Text>
       </div>
 

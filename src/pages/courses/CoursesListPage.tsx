@@ -98,7 +98,6 @@ const CoursesListPage: React.FC = () => {
   };
 
   const columns: TableColumnType<Course>[] = [
-    { title: '#', dataIndex: 'id', key: 'id', width: 60 },
     {
       title: 'Tên khóa học',
       dataIndex: 'name',

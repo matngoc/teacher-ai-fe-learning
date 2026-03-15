@@ -52,7 +52,6 @@ const PermissionsListPage: React.FC = () => {
   };
 
   const columns: TableColumnType<Permission>[] = [
-    { title: '#', dataIndex: 'id', key: 'id', width: 60 },
     { title: 'Tên', dataIndex: 'name', key: 'name', render: (v) => <strong>{v}</strong> },
     { title: 'Resource', dataIndex: 'resource', key: 'resource', render: (v) => <Tag color="blue">{v}</Tag> },
     { title: 'Action', dataIndex: 'action', key: 'action', render: (v) => <Tag color="green">{v}</Tag> },

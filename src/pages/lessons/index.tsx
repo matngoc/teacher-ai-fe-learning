@@ -93,7 +93,6 @@ const LessonManagePage: React.FC = () => {
   };
 
   const columns: TableColumnType<Lesson>[] = [
-    { title: '#', dataIndex: 'id', key: 'id', width: 60 },
     {
       title: 'Tên bài học',
       dataIndex: 'name',

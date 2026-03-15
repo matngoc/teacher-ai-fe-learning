@@ -35,7 +35,6 @@ const LoginPage: React.FC = () => {
     }
   };
 
-  // Google OAuth popup flow: lấy access_token rồi gửi lên backend
   const handleGoogleLogin = useGoogleLogin({
     onSuccess: async (tokenResponse) => {
       const result = await dispatch(googleLoginThunk(tokenResponse.access_token));
@@ -46,84 +45,107 @@ const LoginPage: React.FC = () => {
     onError: () => {
       dispatch(setError('Đăng nhập Google thất bại. Vui lòng thử lại.'));
     },
-    flow: 'implicit', // lấy access_token ngay, không cần code exchange
+    flow: 'implicit',
   });
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
-      <Card className="w-full max-w-md shadow-lg rounded-2xl" styles={{ body: { padding: 40 } }}>
-        <div className="text-center mb-8">
-          <div className="text-5xl mb-3"></div>
-          <Title level={2} className="!mb-1">HanaTalk</Title>
-          <Text type="secondary">Đăng nhập vào hệ thống quản trị</Text>
+    <div
+      className='min-h-screen flex items-center justify-center'
+      style={{
+        backgroundImage: "url('/background.jpg')",
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+      }}
+    >
+      <Card
+        className='w-full max-w-md shadow-2xl rounded-2xl relative z-10'
+        styles={{
+          body: { padding: 30 },
+        }}
+        style={{
+          background: 'rgba(255, 255, 255, 0.15)',
+          backdropFilter: 'blur(20px)',
+          WebkitBackdropFilter: 'blur(20px)',
+          border: '1px solid rgba(255, 255, 255, 0.3)',
+          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.25)',
+        }}
+      >
+        <div className='text-center mb-4'>
+          <img src={'logo.png'} alt='Logo' className='mx-auto w-32 h-28 mb-4' />
+          <Title level={4} className={'primary-bold-text font-bold'}>
+            CHÀO MỪNG BẠN ĐẾN VỚI HANATALK!
+          </Title>
         </div>
 
         {error && (
           <Alert
             message={error}
-            type="error"
+            type='error'
             showIcon
-            className="mb-4"
+            className='mb-4'
             closable
             onClose={() => dispatch(clearError())}
           />
         )}
 
-        <Form layout="vertical" onFinish={onFinish} autoComplete="off" size="large">
-          <Form.Item
-            name="username"
-            rules={[{ required: true, message: 'Vui lòng nhập tên đăng nhập!' }]}
-          >
-            <Input prefix={<UserOutlined />} placeholder="Tên đăng nhập" />
+        <Form layout='vertical' onFinish={onFinish} autoComplete='off' size='large'>
+          <Form.Item name='username' rules={[{ required: true, message: 'Vui lòng nhập tên đăng nhập!' }]}>
+            <Input prefix={<UserOutlined />} placeholder='Tên đăng nhập' />
           </Form.Item>
-          <Form.Item
-            name="password"
-            rules={[{ required: true, message: 'Vui lòng nhập mật khẩu!' }]}
-          >
-            <Input.Password prefix={<LockOutlined />} placeholder="Mật khẩu" />
+          <Form.Item name='password' rules={[{ required: true, message: 'Vui lòng nhập mật khẩu!' }]}>
+            <Input.Password prefix={<LockOutlined />} placeholder='Mật khẩu' />
           </Form.Item>
-          <Form.Item className="mb-2">
-            <Button
-              type="primary"
-              htmlType="submit"
-              loading={loading}
-              block
-              className="rounded-lg h-11"
-            >
+          <Form.Item className='mb-2'>
+            <Button type='primary' htmlType='submit' loading={loading} block className='rounded-lg h-11'>
               Đăng nhập
             </Button>
           </Form.Item>
         </Form>
 
         <Divider plain>
-          <Text type="secondary" className="text-xs">hoặc</Text>
+          <Text type='secondary' className='text-xs'>
+            hoặc
+          </Text>
         </Divider>
 
         <Button
           block
-          size="large"
+          size='large'
           loading={loading}
           onClick={() => handleGoogleLogin()}
-          className="rounded-lg h-11 flex items-center justify-center gap-2 border border-gray-300 hover:border-blue-400 hover:text-blue-500"
+          className='rounded-lg h-11 flex items-center justify-center gap-2 border border-gray-300 hover:border-blue-400 hover:text-blue-500'
           icon={
-            <svg width="18" height="18" viewBox="0 0 48 48">
-              <path fill="#EA4335" d="M24 9.5c3.1 0 5.8 1.1 8 2.9l6-6C34.5 3.1 29.6 1 24 1 14.8 1 7 6.7 3.7 14.8l7 5.4C12.4 14 17.7 9.5 24 9.5z"/>
-              <path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.3 5.5-4.8 7.2l7.4 5.7c4.3-4 6.8-9.9 6.8-17.4z" />
-              <path fill="#FBBC05" d="M10.7 28.8A14.6 14.6 0 0 1 9.5 24c0-1.7.3-3.3.8-4.8l-7-5.4A23.9 23.9 0 0 0 0 24c0 3.8.9 7.4 2.5 10.6l8.2-5.8z"/>
-              <path fill="#34A853" d="M24 47c5.4 0 9.9-1.8 13.2-4.8l-7.4-5.7c-1.8 1.2-4.1 2-5.8 2-6.3 0-11.6-4.3-13.5-10.1l-8.2 5.8C7 41.3 14.8 47 24 47z"/>
+            <svg width='18' height='18' viewBox='0 0 48 48'>
+              <path
+                fill='#EA4335'
+                d='M24 9.5c3.1 0 5.8 1.1 8 2.9l6-6C34.5 3.1 29.6 1 24 1 14.8 1 7 6.7 3.7 14.8l7 5.4C12.4 14 17.7 9.5 24 9.5z'
+              />
+              <path
+                fill='#4285F4'
+                d='M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.3 5.5-4.8 7.2l7.4 5.7c4.3-4 6.8-9.9 6.8-17.4z'
+              />
+              <path
+                fill='#FBBC05'
+                d='M10.7 28.8A14.6 14.6 0 0 1 9.5 24c0-1.7.3-3.3.8-4.8l-7-5.4A23.9 23.9 0 0 0 0 24c0 3.8.9 7.4 2.5 10.6l8.2-5.8z'
+              />
+              <path
+                fill='#34A853'
+                d='M24 47c5.4 0 9.9-1.8 13.2-4.8l-7.4-5.7c-1.8 1.2-4.1 2-5.8 2-6.3 0-11.6-4.3-13.5-10.1l-8.2 5.8C7 41.3 14.8 47 24 47z'
+              />
             </svg>
           }
         >
           Đăng nhập với Google
         </Button>
 
-        <div className="text-center mt-4">
-          <Text type="secondary">Chưa có tài khoản? </Text>
-          <Link to="/register">Đăng ký ngay</Link>
+        <div className='text-center mt-4'>
+          <Text type='secondary'>Chưa có tài khoản? </Text>
+          <Link to='/register'>Đăng ký ngay</Link>
         </div>
       </Card>
     </div>
-  );
+  )
 };
 
 export default LoginPage;

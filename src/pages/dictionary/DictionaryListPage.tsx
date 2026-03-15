@@ -69,7 +69,6 @@ const DictionaryListPage: React.FC = () => {
   };
 
   const columns: TableColumnType<Dictionary>[] = [
-    { title: '#', dataIndex: 'id', key: 'id', width: 60 },
     { title: 'Key', dataIndex: 'key', key: 'key', render: (v) => <code className="bg-gray-100 px-1 rounded">{v}</code> },
     { title: 'Value', dataIndex: 'value', key: 'value', render: (v) => <strong>{v}</strong> },
     {

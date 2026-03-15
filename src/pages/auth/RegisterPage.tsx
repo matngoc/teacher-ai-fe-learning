@@ -18,72 +18,100 @@ const RegisterPage: React.FC = () => {
   }, [dispatch]);
 
   const onFinish = async (values: RegisterDto & { confirmPassword: string }) => {
-    const { confirmPassword: _, ...data } = values;
-    const result = await dispatch(registerThunk(data));
+    const { confirmPassword: _, ...data } = values
+    const result = await dispatch(registerThunk(data))
     if (registerThunk.fulfilled.match(result)) {
-      message.success('Đăng ký thành công! Vui lòng đăng nhập.');
-      navigate('/login');
+      message.success('Đăng ký thành công! Vui lòng đăng nhập.')
+      navigate('/login')
     }
-  };
+  }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 to-emerald-100">
-      <Card className="w-full max-w-md shadow-lg rounded-2xl" bodyStyle={{ padding: 40 }}>
-        <div className="text-center mb-8">
-          <div className="text-5xl mb-3"></div>
-          <Title level={2} className="!mb-1">Đăng ký</Title>
-          <Text type="secondary">Tạo tài khoản HanaTalk</Text>
+    <div
+      className='min-h-screen flex items-center justify-center'
+      style={{
+        backgroundImage: "url('/background.jpg')",
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat'
+      }}
+    >
+      <Card
+        className='w-full max-w-md shadow-2xl rounded-2xl relative z-10'
+        styles={{
+          body: { padding: 30 }
+        }}
+        style={{
+          background: 'rgba(255, 255, 255, 0.15)',
+          backdropFilter: 'blur(20px)',
+          WebkitBackdropFilter: 'blur(20px)',
+          border: '1px solid rgba(255, 255, 255, 0.3)',
+          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.25)'
+        }}
+      >
+        <div className='text-center mb-4'>
+          <img src={'logo.png'} alt='Logo' className='mx-auto w-32 h-28 mb-4' />
+          <Title level={4} className={'primary-bold-text font-bold'}>
+            CHÀO MỪNG BẠN ĐẾN VỚI HANATALK!
+          </Title>
         </div>
 
         {error && (
-          <Alert message={error} type="error" showIcon className="mb-4" closable onClose={() => dispatch(clearError())} />
+          <Alert
+            message={error}
+            type='error'
+            showIcon
+            className='mb-4'
+            closable
+            onClose={() => dispatch(clearError())}
+          />
         )}
 
-        <Form layout="vertical" onFinish={onFinish} autoComplete="off" size="large">
-          <Form.Item name="username" rules={[{ required: true, message: 'Vui lòng nhập tên đăng nhập!' }]}>
-            <Input prefix={<UserOutlined />} placeholder="Tên đăng nhập" />
+        <Form layout='vertical' onFinish={onFinish} autoComplete='off' size='large'>
+          <Form.Item name='username' rules={[{ required: true, message: 'Vui lòng nhập tên đăng nhập!' }]}>
+            <Input prefix={<UserOutlined />} placeholder='Tên đăng nhập' />
           </Form.Item>
-          <Form.Item name="email" rules={[{ required: true, type: 'email', message: 'Email không hợp lệ!' }]}>
-            <Input prefix={<MailOutlined />} placeholder="Email" />
+          <Form.Item name='email' rules={[{ required: true, type: 'email', message: 'Email không hợp lệ!' }]}>
+            <Input prefix={<MailOutlined />} placeholder='Email' />
           </Form.Item>
-          <Form.Item name="firstName">
-            <Input prefix={<UserOutlined />} placeholder="Họ" />
+          <Form.Item name='firstName'>
+            <Input prefix={<UserOutlined />} placeholder='Họ' />
           </Form.Item>
-          <Form.Item name="lastName">
-            <Input prefix={<UserOutlined />} placeholder="Tên" />
+          <Form.Item name='lastName'>
+            <Input prefix={<UserOutlined />} placeholder='Tên' />
           </Form.Item>
-          <Form.Item name="password" rules={[{ required: true, min: 6, message: 'Mật khẩu tối thiểu 6 ký tự!' }]}>
-            <Input.Password prefix={<LockOutlined />} placeholder="Mật khẩu" />
+          <Form.Item name='password' rules={[{ required: true, min: 6, message: 'Mật khẩu tối thiểu 6 ký tự!' }]}>
+            <Input.Password prefix={<LockOutlined />} placeholder='Mật khẩu' />
           </Form.Item>
           <Form.Item
-            name="confirmPassword"
+            name='confirmPassword'
             dependencies={['password']}
             rules={[
               { required: true, message: 'Vui lòng xác nhận mật khẩu!' },
               ({ getFieldValue }) => ({
                 validator(_, value) {
-                  if (!value || getFieldValue('password') === value) return Promise.resolve();
-                  return Promise.reject(new Error('Mật khẩu không khớp!'));
-                },
-              }),
+                  if (!value || getFieldValue('password') === value) return Promise.resolve()
+                  return Promise.reject(new Error('Mật khẩu không khớp!'))
+                }
+              })
             ]}
           >
-            <Input.Password prefix={<LockOutlined />} placeholder="Xác nhận mật khẩu" />
+            <Input.Password prefix={<LockOutlined />} placeholder='Xác nhận mật khẩu' />
           </Form.Item>
           <Form.Item>
-            <Button type="primary" htmlType="submit" loading={loading} block className="rounded-lg h-11">
+            <Button type='primary' htmlType='submit' loading={loading} block className='rounded-lg h-11'>
               Đăng ký
             </Button>
           </Form.Item>
         </Form>
 
-        <div className="text-center mt-2">
-          <Text type="secondary">Đã có tài khoản? </Text>
-          <Link to="/login">Đăng nhập</Link>
+        <div className='text-center mt-2'>
+          <Text type='secondary'>Đã có tài khoản? </Text>
+          <Link to='/login'>Đăng nhập</Link>
         </div>
       </Card>
     </div>
-  );
+  )
 };
 
 export default RegisterPage;
